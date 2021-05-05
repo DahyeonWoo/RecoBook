@@ -51,11 +51,13 @@
 
 참고
 
-[주문 챗봇 시스템](https://geundung.dev/76)
-
 [간단 챗봇 만들기](https://medium.com/@jwlee98/gcp-dialogflow-%EB%A5%BC-%EC%9D%B4%EC%9A%A9%ED%95%9C-%EA%B0%84%EB%8B%A8-%EC%B1%97%EB%B4%87-%EB%A7%8C%EB%93%A4%EA%B8%B0-514ea25e4961)
 
 [도서검색 API 리스트](https://steemit.com/kr/@anpigon/open-api)
+
+[Mysql과 Dialogflow 연결하기](https://www.youtube.com/watch?v=v7k5vckSzNo)
+
+[멜론 노래추천 dialogflow](http://www.kwangsiklee.com/2018/01/%EA%B5%AC%EA%B8%80-ai-%ED%94%8C%EB%9E%AB%ED%8F%BC-dialogflow-%EB%88%88%EC%9C%BC%EB%A1%9C-%EB%94%B0%EB%9D%BC%ED%95%98%EB%A9%B0-%EB%B0%B0%EC%9A%B0%EA%B8%B0/)
 
 ## 1. Intent
 
@@ -86,6 +88,7 @@
 - DB연결을 어떻게 할 것인가?
   - ex) "A책과 비슷한 책을 추천해줘''
     - A 책을 찾기위해 dialogflow와 DB를 어떻게 연결할 것인지
+    - 크롤링을 통한 DB 구축보다는 API 활용하는게 쉬워보임
 - 두 가지 이상의 키워드를 동시에 물어볼 경우 어떻게 할 것인가?
   - ex) "B 작가의 C 책과 비슷한 책을 추천해줘"
     - 두 가지 인텐트가 동시에 존재할 때 어떻게 처리할 것인가?
@@ -105,6 +108,7 @@
 - 사용자가 잘못 입력한 경우
   - ex) "북코드 작가의 책을 추천해줘" 대신 "붘코드 작가의 책을 추천해줘"라고 입력한 경우
     - 검색 결과가 없다고 응답할 것인지? 북코드 작가로 인식해서 출력할 것인지?
-
-- fullfilment는 node.js로 작성해야함
-  - DB 받아오기, 
+      - [퍼지 일치 사용?](https://cloud.google.com/dialogflow/es/docs/entities-fuzzy)
+- 엔터티 리스트
+  - 방대한 도서/ 작가/ 장르를 하나하나 엔터티 항목에 채우기란 불가능
+    - [엔터티 내보내기 및 가져오기](https://cloud.google.com/dialogflow/es/docs/entities-export) 
