@@ -1,2 +1,2 @@
-# Bookcode_study
-2021년도 한이음 북코드팀 스터디
+# BookCode
+도서 추천 챗봇 프로젝트
