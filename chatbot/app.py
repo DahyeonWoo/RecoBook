@@ -21,7 +21,6 @@ def add_user(user_id):
     resource.append(user)
     return jsonify(resource)
 
-
 @app.route('/json/<int:dest_id>/<message>')
 @app.route('/JSON/<int:dest_id>/<message>')
 def send_message(dest_id,message):
