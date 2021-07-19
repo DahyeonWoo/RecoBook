@@ -12,42 +12,6 @@ class ChatbotMessageSender:
     # chatbot custom secret key
     secret_key = 'S2V4elFrenVqbGNXQURQWnFKc2V2ZWJjZHJWdXdWc0c='
 
-    def welcome(self):
-        timestamp = self.get_timestamp()
-        request_body = {
-            "version": "v2",
-            "userId": "U47b00b58c90f8e47428af8b7bddcda3d",
-            "timestamp": timestamp,
-            "bubbles": [
-                {
-                "type": "text",
-                } 
-            ],
-            "event": "open"
-        }
-
-        ## Request body
-        encode_request_body = json.dumps(request_body).encode('UTF-8')
-
-        ## make signature
-        signature = self.make_signature(self.secret_key, encode_request_body)
-
-        ## headers
-        custom_headers = {
-            'Content-Type': 'application/json;UTF-8',
-            'X-NCP-CHATBOT_SIGNATURE': signature
-        }
-
-        # print("## Timestamp : ", timestamp)
-        # print("## Signature : ", signature)
-        # print("## headers ", custom_headers)
-        print("## Request Body : ", encode_request_body)
-
-        ## POST Request
-        response = requests.post(headers=custom_headers, url=self.ep_path, data=encode_request_body)
-
-        return response
-
     def req_message_send(self):
 
         timestamp = self.get_timestamp()
@@ -59,7 +23,7 @@ class ChatbotMessageSender:
                 {
                     'type': 'text',
                     'data': {
-                        'description': 'About Me'
+                        'description': '도서 추천해줘'
                     }
                 }
             ],
@@ -87,7 +51,8 @@ class ChatbotMessageSender:
         response = requests.post(headers=custom_headers, url=self.ep_path, data=encode_request_body)
 
         return response
-    def success():
+        
+    def success(self):
         timestamp = self.get_timestamp()
         request_body = {
             "version": "v2",
@@ -130,6 +95,8 @@ class ChatbotMessageSender:
 
         ## POST Request
         response = requests.post(headers=custom_headers, url=self.ep_path, data=encode_request_body)
+
+        return response
     @staticmethod
     def get_timestamp():
         timestamp = datetime.now()
@@ -147,7 +114,7 @@ class ChatbotMessageSender:
 
 if __name__ == '__main__':
     
-    res = ChatbotMessageSender().welcome()
+    res = ChatbotMessageSender().req_message_send()
 
     print(res.status_code)
     if(res.status_code == 200):
