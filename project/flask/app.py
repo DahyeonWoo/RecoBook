@@ -23,7 +23,10 @@ app = Flask(__name__)
 #     return render_template('bookcode.html')
 
 if __name__ == '__main__':
-    # message_send = CM().req_message_send()
-    app.run(debug=True)
-    welcome_message = CM().welcome()
+    res = CM().req_message_send()
+    print(res.status_code)
+    if(res.status_code == 200):
+        print(res.text)
+        # print(res.read().d
+
     

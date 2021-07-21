@@ -4,6 +4,7 @@ import base64
 import requests
 import json
 from datetime import datetime
+import time
 
 class ChatbotMessageSender:
 
@@ -23,7 +24,7 @@ class ChatbotMessageSender:
                 {
                     'type': 'text',
                     'data': {
-                        'description': '도서 추천해줘'
+                        'description': '아몬드랑 비슷한 책 추천해줘'
                     }
                 }
             ],
@@ -97,10 +98,11 @@ class ChatbotMessageSender:
         response = requests.post(headers=custom_headers, url=self.ep_path, data=encode_request_body)
 
         return response
+
     @staticmethod
     def get_timestamp():
-        timestamp = datetime.now()
-        return str(timestamp)
+        timestamp = int(time.time() * 1000)
+        return timestamp
 
     @staticmethod
     def make_signature(secret_key, request_body):
