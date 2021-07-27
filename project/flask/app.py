@@ -4,7 +4,7 @@ import json
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from api.chatbot import ChatbotMessageSender as CM
-
+from api.user import User
 from api.openapi import Aladin
 #from api.user import User
 
@@ -40,11 +40,17 @@ def post_now_showing():
 def get_now_showing():
     Book = User().get_user()
 
+@app.route('/author/<name>', methods=['POST'])
+def post_author(name):
+    Author = Aladin().get_author(name)
+    return 
+
 if __name__ == '__main__':
     res = CM().req_message_send()
     print(res.status_code)
     if(res.status_code == 200):
         print(res.text)
+    app.run(debug=True)
         # print(res.read().d
 
     
