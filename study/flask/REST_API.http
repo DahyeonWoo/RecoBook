@@ -1,0 +1,1 @@
+get https://clovachatbot.ncloud.com/api/v1/actionmethod/echo?entity=author
