@@ -1,6 +1,5 @@
-from db_model.mysql import conn_mysqldb
-import pymysql
-from decouple import config
+#from flask_login import UserMixin
+from api.db_model.mysql import conn_mysqldb
 
 class User():
 

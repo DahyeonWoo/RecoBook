@@ -5,13 +5,14 @@ import requests
 import json
 from datetime import datetime
 import time
+from decouple import config
+
 
 class ChatbotMessageSender:
-
     # chatbot api gateway url
-    ep_path = 'https://20ede21bde4b4719b4d6ebb68880f80e.apigw.ntruss.com/custom/v1/4892/e7ce8f9fab706825ea5c03edcc053dbc8ebcb5b22ac1a8971c5bd83b201962ca'
+    ep_path = config("INVOKE_URL")
     # chatbot custom secret key
-    secret_key = 'S2V4elFrenVqbGNXQURQWnFKc2V2ZWJjZHJWdXdWc0c='
+    secret_key = config("SECRET_KEY")
 
     def req_message_send(self):
 
@@ -24,7 +25,7 @@ class ChatbotMessageSender:
                 {
                     'type': 'text',
                     'data': {
-                        'description': '아몬드랑 비슷한 책 추천해줘'
+                        'description': '로맨스 장르 책 추천해줘'
                     }
                 }
             ],

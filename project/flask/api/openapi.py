@@ -1,8 +1,7 @@
 #-*- coding:utf-8 -*-
 import requests
 import json
-from db_model.mysql import conn_mysqldb
-import pymysql
+from api.db_model.mysql import conn_mysqldb
 from decouple import config
 # from flask import IntegrityError
 # from pymysql import PYMYSQL_DUPLICATE_ERROR
