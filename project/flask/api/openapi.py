@@ -4,6 +4,8 @@ import json
 from db_model.mysql import conn_mysqldb
 import pymysql
 from decouple import config
+# from flask import IntegrityError
+# from pymysql import PYMYSQL_DUPLICATE_ERROR
 
 class Aladin:
 
@@ -12,8 +14,8 @@ class Aladin:
         db = pymysql.connect(host=config('host'),port=3306,user=config('user'),passwd=config('passwd'),db=config('db'),charset='utf8mb4')
         db_cursor = db.cursor()
         ttbkey = config('TTBKEY')
-        url = f"http://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey="+str(ttbkey)+"&QueryType=Bestseller&MaxResults=50" \
-        "&start=1&SearchTarget=Book&output=js&Version=20131101&CategoryId=0"
+        url = f"http://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey="+str(ttbkey)+"&QueryType=Bestseller&MaxResults=30" \
+        "&start=23&SearchTarget=Book&output=js&Version=20131101&CategoryId=0" # 8번행 건너뜀 # 18번 error #21번 건너뜀 # 시나공 책 하나 제외 21번 중복 # 22번 중복
         
         bookList = requests.get(url).json()
         
@@ -41,8 +43,20 @@ class Aladin:
             sql = """INSERT INTO Book(isbn13,title,link,author,publishDate,description,publisher,priceStandard,stockStatus,cover,salesPoint,adult,customerReviewRank,category,bestRank) 
             values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
             """
+            # try:
+            #     try:
+            #         db_cursor.execute(sql,(isbn13,title,link,author,publishDate,description,publisher,priceStandard,stockStatus,cover,salesPoint,adult,customerReviewRank,category,bestRank))
+            #         db.commit()
+            #     except IntegrityError as e:
+            #         if e.args[0] == PYMYSQL_DUPLICATE_ERROR:
+            #             print(e)
+            #             pass
+            #         else:
+            #             raise
+            # except Exception as e:
+            #     print(e)
+            
             db_cursor.execute(sql,(isbn13,title,link,author,publishDate,description,publisher,priceStandard,stockStatus,cover,salesPoint,adult,customerReviewRank,category,bestRank))
-
             db.commit()
             
         db_cursor.close()
