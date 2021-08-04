@@ -138,17 +138,26 @@ class User():
             mysql_db = conn_mysqldb()
             db_cursor = mysql_db.cursor()
             book_want = User.UserWish.get_book_want(user_name)
-            book_want =  book_want.split(',') # 해당 사용자의 읽은 책들을 리스트로 변환
-            if title not in book_want: # 읽은 책이 이미 리스트에 있는지 확인
-                book_want.append(title) # 리스트에 없는 경우 읽은 책 추가
-                sep_book_want = ','.join(book_want) # 리스트를 ,구분 문자열로 변환
+            
+            try:
+                book_want =  book_want.split(',') # 해당 사용자의 읽은 책들을 리스트로 변환
+                if title not in book_want: # 읽은 책이 이미 리스트에 있는지 확인
+                    book_want.append(title) # 리스트에 없는 경우 읽은 책 추가
+                    sep_book_want = ','.join(book_want) # 리스트를 ,구분 문자열로 변환
+                    sql = "UPDATE User SET bookWant = %s WHERE name = %s" # 해당 사용자의 읽은 책 리스트를 업데이트할 쿼리문
+                    db_cursor.execute(sql, (sep_book_want, user_name)) # 해당 사용자의 읽은 책 리스트를 업데이트
+                    mysql_db.commit() # 트랜잭션 저장
+                    db_cursor.close() # 커서 닫기
+                    print('위시리스트 추가 완료')
+                else:# 해당 사용자의 읽은 책 리스트에 추가할 책이 있을 경우
+                    print('추가할 책이 이미 존재합니다.')
+            except AttributeError:
                 sql = "UPDATE User SET bookWant = %s WHERE name = %s" # 해당 사용자의 읽은 책 리스트를 업데이트할 쿼리문
-                db_cursor.execute(sql, (sep_book_want, user_name)) # 해당 사용자의 읽은 책 리스트를 업데이트
+                db_cursor.execute(sql, (title, user_name)) # 해당 사용자의 읽은 책 리스트를 업데이트
                 mysql_db.commit() # 트랜잭션 저장
                 db_cursor.close() # 커서 닫기
                 print('위시리스트 추가 완료')
-            else:# 해당 사용자의 읽은 책 리스트에 추가할 책이 있을 경우
-                print('추가할 책이 이미 존재합니다.')
+
 
         @staticmethod
         def delete_book_want(user_name, title):
@@ -173,6 +182,78 @@ class User():
             db_cursor.close() # 커서 닫기
             print('위시리스트 삭제 완료')
 
+    class UserAuthor:
+        @staticmethod
+        def get_interest_author(user_name):
+            """
+            선호 작가 목록을 가져오는 함수
+            :params user_name: 유저의 이름
+            :return: 선호 작가 목록
+            """
+            mysql_db = conn_mysqldb()
+            db_cursor = mysql_db.cursor()
+            sql = "SELECT interestAuthor FROM User WHERE name = '" + str(user_name) + "'"
+            db_cursor.execute(sql)
+            author_list = db_cursor.fetchone()
+            return author_list[0]
+
+        @staticmethod
+        def insert_interest_author(user_name, author_name):
+            """
+            선호 작가를 추가하는 함수
+            :params user_name: 유저의 이름
+            :params author_name: 추가할 작가의 이름
+            """
+            mysql_db = conn_mysqldb()
+            db_cursor = mysql_db.cursor()
+            author_list = User.UserAuthor.get_interest_author(user_name)
+            
+            try:
+                author_list = author_list.split(',')
+                print(author_list)
+                if author_name not in author_list:
+                    author_list = author_list + ',' + author_name
+                    sql = "UPDATE User SET interestAuthor = %s WHERE name = %s"
+                    db_cursor.execute(sql, (author_list, user_name))
+                    mysql_db.commit()
+                    db_cursor.close()
+                    print('추가 완료')
+                else:
+                    print('이미 추가되어 있습니다.')
+                    return None
+            except TypeError:
+                sql = "UPDATE User SET interestAuthor = %s WHERE name = %s"
+                db_cursor.execute(sql, (author_name, user_name))
+                mysql_db.commit()
+                db_cursor.close()
+                print('추가 완료')
+
+
+
+        @staticmethod
+        def delete_interest_author(user_name, author_name):
+            """
+            선호 작가를 삭제하는 함수
+            :params user_name: 유저의 이름
+            :params author_name: 삭제할 작가의 이름
+            """
+            mysql_db = conn_mysqldb()
+            db_cursor = mysql_db.cursor()
+            author_list = User.UserAuthor.get_interest_author(user_name)
+            try:
+                author_list = author_list.split(',')
+                author_list.remove(author_name)
+            except (ValueError, AttributeError) as e:
+                print('해당 작가가 없습니다.')
+                return None
+            sep_author_list = ','.join(author_list)
+            sql = "UPDATE User SET interestAuthor = %s WHERE name = %s"
+            db_cursor.execute(sql, (sep_author_list, user_name))
+            mysql_db.commit()
+            db_cursor.close()
+            print('삭제 완료')
+
+
 
 
 
@@ -182,9 +263,13 @@ if __name__ == '__main__':
     # res = User.UserRead.insert_read_book('이현준', '아몬드') # 읽은 책 추가
     # res = User.UserRead.delete_read_book('이현준', '아몬드') # 읽은 책 삭제
     # res = User.UserRead.get_read_book('이현준') # 읽은 책 가져오기
-    # res = User.UserWish.insert_book_want('이현준', '아몬드')
-    res = User.UserWish.delete_book_want('이현준', '아몬드')
-    res = User.UserWish.get_book_want('이현준')
+    # res = User.UserWish.insert_book_want('김민준', '아몬드')
+    # res = User.UserWish.delete_book_want('김민준', '아몬드')
+    # res = User.UserWish.get_book_want('김민준')
+    # res = User.UserAuthor.insert_interest_author('김민준', '김영하')
+    res = User.UserAuthor.delete_interest_author('박지훈', '김')
+    res = User.UserAuthor.get_interest_author('박지훈')
+    
     
     
     print(res)
