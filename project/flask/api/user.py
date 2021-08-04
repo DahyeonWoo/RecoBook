@@ -34,19 +34,35 @@ class User():
         user = db_cursor.fetchone()
         return user
 
+    # @staticmethod
+    # def get_db_data(name, db_col):
+    #     """
+    #     읽은 책을 불러오는 함수
+    #     :params name: 사용자의 이름
+    #     :params db_col: 조회할 컬럼
+    #     :return: 읽은 책의 정보
+    #     """
+    #     mysql_db = conn_mysqldb()
+    #     db_cursor = mysql_db.cursor()
+    #     sql = "SELECT %s FROM User WHERE name = %s"
+    #     db_cursor.execute(sql, (name, db_col))
+    #     db_data = db_cursor.fetchone()
+    #     return db_data[0]
+
     @staticmethod
-    def get_db_data(name, db_col):
+    def get_read_book(user_name):
         """
-        읽은 책을 불러오는 함수
-        :params name: 사용자의 이름
-        :return: 읽은 책의 정보
+        읽은 책 리스트를 가져오는 함수
+        :params user_name: 유저의 이름 
+        :return: 읽은 책 리스트
         """
         mysql_db = conn_mysqldb()
         db_cursor = mysql_db.cursor()
-        sql = "SELECT %s FROM User WHERE name = %s"
-        db_cursor.execute(sql, (name, db_col))
-        read_book = db_cursor.fetchone()
-        return read_book[0]
+        sql = "SELECT bookRead FROM User WHERE name = '" + str(user_name) + "'"
+        db_cursor.execute(sql)
+        user = db_cursor.fetchone()
+        return user[0]
+
 
     @staticmethod
     def insert_read_book(user_name, title):
@@ -57,7 +73,8 @@ class User():
         """
         mysql_db = conn_mysqldb()
         db_cursor = mysql_db.cursor()
-        read_book = User.get_db_data(user_name, 'bookRead')
+        # read_book = User.get_db_data(user_name, 'bookRead')
+        read_book = User.get_read_book(user_name)
         read_book =  read_book.split(',') # 해당 사용자의 읽은 책들을 리스트로 변환
         if title not in read_book: # 읽은 책이 이미 리스트에 있는지 확인
             read_book.append(title) # 리스트에 없는 경우 읽은 책 추가
@@ -79,7 +96,8 @@ class User():
         """
         mysql_db = conn_mysqldb()
         db_cursor = mysql_db.cursor()
-        read_book = User.get_db_data(user_name, 'bookRead')
+        # read_book = User.get_db_data(user_name, 'bookRead')
+        read_book = User.get_read_book(user_name)
         read_book = read_book.split(',') # 튜플로 받은 읽은 책 문자열을 리스트로 변환
         try: # 해당 사용자의 읽은 책 리스트에서 삭제할 책의 이름을 찾아서 삭제
             read_book.remove(title)
@@ -97,7 +115,7 @@ class User():
 
 if __name__ == '__main__':
     # User.post_user('이독자','2000-07-07',22, 'M','밤의 여행자들','밝은 밤','이웃집 밤','이지은','소설')
-    res = User.insert_read_book('이현준', '아몬드') # 읽은 책 추가
+    # res = User.insert_read_book('이현준', '아몬드') # 읽은 책 추가
     res = User.delete_read_book('이현준', '아몬드') # 읽은 책 삭제
     res = User.get_read_book('이현준') # 읽은 책 가져오기
     print(res)
