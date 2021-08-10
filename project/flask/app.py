@@ -1,31 +1,36 @@
+import sys
+sys.path.append('./project/flask/api')
 from flask import Flask, render_template, request, redirect, jsonify
-import requests
-import json
-from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
-from api.chatbot import ChatbotMessageSender as CM
-from api.user import User
+from flask_restful import Api, reqparse
+
+from api.user import UserInfo, UserAuthor, UserGenre, UserRead, UserWish
 from api.openapi import Aladin
-from model import Author, Book, Genre
-import urllib
-#from api.user import User
+from api import book
+
 
 app = Flask(__name__)
 
-
-@app.route('/bookList', methods=['POST'])
-def post_now_showing():
-    Book = Aladin().get_book()
-    return jsonify({'result': 'success'})
+@app.route('/')
+def index():
+    return render_template('index.html')
 
 @app.route('/bookList', methods=['GET'])
-def get_now_showing():
-    Book = User().get_user()
+def post_now_showing():
+    Book = Aladin().get_book()
+    return Book.json()
 
-@app.route('/author/<name>', methods=['GET'])
-def post_author(name):
-    author_name = Author().get_author(name)
-    return author_name
+@app.route('/user', methods=['GET'])
+def get_now_showing():
+    user = request.args.get('name')
+    user_info = UserInfo().get_user(user)
+    return user_info
+
+@app.route('/book', methods=['GET'])
+def get_author():
+    author = request.args.get('author')
+    book_info = book.get_author_to_info(author)
+    return book_info
+
 
 @app.route('/genre', methods=['POST'])
 def post_genre():
