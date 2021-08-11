@@ -1,9 +1,9 @@
 import sys
 import json
 sys.path.append('./project/flask/api')
-from api.db_model.mysql import conn_mysqldb
-from api.ColumnsFromDB import *
-from CreateDict import create_dict
+from db_model.mysql import conn_mysqldb
+from utils.ColumnsFromDB import *
+from utils.CreateDict import create_dict
 
 
 def get_title_to_info(title):
@@ -96,8 +96,8 @@ def get_title_to_review(title):
 
 if __name__ == '__main__':
     # res = Book.get_title_to_review('달러구트')
-    # res = Book.get_title_to_info('달러구트')
+    res = get_title_to_info('금각사')
     # res = Book.get_author_to_info('이미예')
-    res = get_isbn_to_info('9791165341909')
+    # res = get_isbn_to_info('9791165341909')
     print(res)
     print(len(res))

@@ -1,3 +1,5 @@
+import sys
+sys.path.append('./project/flask/')
 from api.db_model.mysql import conn_mysqldb
 
 def get_col_name(table_name):

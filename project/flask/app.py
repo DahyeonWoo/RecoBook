@@ -1,7 +1,6 @@
 import sys
 sys.path.append('./project/flask/api')
 from flask import Flask, render_template, request, redirect, jsonify
-from flask_restful import Api, reqparse
 
 from api.user import UserInfo, UserAuthor, UserGenre, UserRead, UserWish
 from api.openapi import Aladin
@@ -25,9 +24,13 @@ def get_now_showing():
     user_info = UserInfo().get_user(user)
     return user_info
 
-@app.route('/book', methods=['GET'])
-def get_author():
+@app.route('/bookinfo', methods=['GET'])
+def get_bookinfo():
+    title = request.args.get('title')
     author = request.args.get('author')
+    isbn = request.args.get('isbn')
+    book_info = book.get_isbn_to_info(isbn)
+    book_info = book.get_title_to_info(title)
     book_info = book.get_author_to_info(author)
     return book_info
 
