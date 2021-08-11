@@ -1,7 +1,7 @@
 #-*- coding:utf-8 -*-
 import requests
 import json
-from api.db_model.mysql import conn_mysqldb
+from db_model.mysql import conn_mysqldb
 from decouple import config
 # from flask import IntegrityError
 # from pymysql import PYMYSQL_DUPLICATE_ERROR
@@ -63,7 +63,7 @@ class Aladin:
     @staticmethod
     def get_book():
         mysql_db = conn_mysqldb()
-        db_cursor = db.cursor()
+        db_cursor = mysql_db.cursor()
         sql = "SELECT * FROM Book LIMIT 3"
         db_cursor.execute(sql)
         books = db_cursor.fetchall()
@@ -73,6 +73,6 @@ class Aladin:
 
 if __name__ == '__main__':
 
-    Aladin().post_book()
+    res = Aladin().get_book()
     # res = Aladin().get_book()
-    # print(res)
+    print(res[0])
