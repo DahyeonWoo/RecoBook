@@ -3,6 +3,8 @@ import requests
 import json
 from db_model.mysql import conn_mysqldb
 from decouple import config
+import sys
+
 
 class Recommend:
 
