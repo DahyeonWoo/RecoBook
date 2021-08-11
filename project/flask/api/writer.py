@@ -31,12 +31,12 @@ class Writer:
         driver = webdriver.Chrome(options=options, executable_path='/Users/zogak/chromedriver')
 
         try:
-            pageNum = 41
+            pageNum = 1
             i=1
             while(True):
-                if pageNum == 51:
+                if pageNum == 31:
                     break
-                url = f'http://www.yes24.com/24/AuthorFile/AuthorGroup/001?SortGb=01&domainGb=01&fieldGb=01&Type=EX&PageNumber={pageNum}'
+                url = f'http://www.yes24.com/24/AuthorFile/AuthorGroup/002?Type=EX&SortGb=01&RowCnt=20&domainGb=02&fieldGb=01&PageNumber={pageNum}'
                 driver.get(url)
             
                 nameNum = 2*i
@@ -80,8 +80,8 @@ class Writer:
 
 if __name__ == '__main__':
 
-    #Writer().post_writer()
-    res = Writer().get_writer()
-    print(res)
+    Writer().post_writer()
+    #res = Writer().get_writer()
+    #print(res)
 
     #8/5 국내문학작가 825명
