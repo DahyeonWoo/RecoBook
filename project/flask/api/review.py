@@ -36,69 +36,69 @@ class Review:
         return searchList
 
     @staticmethod
+    #리뷰페이지 한 쪽에서 리뷰 5개 가져오는 함수
+    def fiveReview(driver):
+        reviews = ''
+        reviewBlock = driver.find_element_by_id('infoset_reviewContentList')
+        if reviewBlock:
+            print('reviewBlock found')
+
+        childNum = 3
+        while(True):
+            if childNum==8:
+                break
+
+            eachReview = reviewBlock.find_element_by_css_selector(f'div:nth-child({childNum}) > div.reviewInfoBot.crop > a')
+            print('each review found')
+
+            #더보기 누르고
+            btnClick = ActionChains(driver).move_to_element(eachReview).click()
+            btnClick.perform()
+            print('successfully clicked btn')
+            time.sleep(3)
+
+            #내용가져오고
+            reviewTxt = reviewBlock.find_element_by_css_selector(f'div:nth-child({childNum}) > div.reviewInfoBot.origin > div.review_cont')
+            reviewContent = reviewTxt.text
+            #print(reviewContent)
+            
+            reviews = reviews +' | '+reviewContent
+            #print(corpus)
+            #house.append([isbnNum, reviewContent])
+        
+            #스크롤 조금 내리고
+            driver.execute_script("window.scrollTo(0, window.scrollY + 400);")
+
+            childNum = childNum + 1
+        
+        return reviews
+
+    @staticmethod
+    def crawlReview(driver):
+        reviewTemp = ''
+        try:
+            reviewPageNum = 4
+            for i in range(4):
+                print('review {} page'.format(i+1))
+                reviewTemp = reviewTemp + Review.fiveReview(driver)
+                nextReview = driver.find_element_by_css_selector(f'#infoset_reviewContentList > div.review_sort.sortBot > div.review_sortLft > div > a:nth-child({reviewPageNum})')
+                if nextReview:
+                    nextReviewClick = ActionChains(driver).move_to_element(nextReview).click()
+                    nextReviewClick.perform()
+                    time.sleep(10)
+                    print('successfully clicked next page')
+                    reviewPageNum = reviewPageNum + 1
+            
+            print("final reviews for one book:", reviewTemp)
+    #         house.append([isbnNum,star,corpus])
+    #         return house
+            return reviewTemp
+        
+        except Exception as e:
+            print(e)
+
+    @staticmethod
     def reviewTable_to_db():
-
-        #리뷰페이지 한 쪽에서 리뷰 5개 가져오는 함수
-        def fiveReview():
-            reviews = ''
-            reviewBlock = driver.find_element_by_id('infoset_reviewContentList')
-            if reviewBlock:
-                print('reviewBlock found')
-
-            childNum = 3
-            while(True):
-                if childNum==8:
-                    break
-
-                eachReview = reviewBlock.find_element_by_css_selector(f'div:nth-child({childNum}) > div.reviewInfoBot.crop > a')
-                print('each review found')
-
-                #더보기 누르고
-                btnClick = ActionChains(driver).move_to_element(eachReview).click()
-                btnClick.perform()
-                print('successfully clicked btn')
-                time.sleep(3)
-
-                #내용가져오고
-                reviewTxt = reviewBlock.find_element_by_css_selector(f'div:nth-child({childNum}) > div.reviewInfoBot.origin > div.review_cont')
-                reviewContent = reviewTxt.text
-                #print(reviewContent)
-                
-                reviews = reviews +' '+reviewContent
-                #print(corpus)
-                #house.append([isbnNum, reviewContent])
-            
-                #스크롤 조금 내리고
-                driver.execute_script("window.scrollTo(0, window.scrollY + 400);")
-
-                childNum = childNum + 1
-            
-            return reviews
-        
-        
-        def crawlReview():
-            reviewTemp = ''
-            try:
-                reviewPageNum = 4
-                for i in range(4):
-                    print('review {} page'.format(i+1))
-                    reviewTemp = reviewTemp + Review.reviewTable_to_db().fiveReview()
-                    nextReview = driver.find_element_by_css_selector(f'#infoset_reviewContentList > div.review_sort.sortBot > div.review_sortLft > div > a:nth-child({reviewPageNum})')
-                    if nextReview:
-                        nextReviewClick = ActionChains(driver).move_to_element(nextReview).click()
-                        nextReviewClick.perform()
-                        time.sleep(10)
-                        print('successfully clicked next page')
-                        reviewPageNum = reviewPageNum + 1
-                
-                print("final reviews for one book:", reviewTemp)
-        #         house.append([isbnNum,star,corpus])
-        #         return house
-                return reviewTemp
-            
-            except Exception as e:
-                print(e)
-
         db = pymysql.connect(host=config('host'),port=3306,user=config('user'),passwd=config('passwd'),db=config('db'),charset='utf8mb4')
         cur = db.cursor()
         
@@ -114,7 +114,7 @@ class Review:
         #values = list()
         star = 0
 
-        for i in range(howMany):
+        for i in range(151,201):
             isbn13 = bList[i]
             print(isbn13)
             #검색창
@@ -138,9 +138,9 @@ class Review:
                     reviewCnt = int(reviewCnt)
                     print('review : ', reviewCnt)
                     
-                    if reviewCnt < 10:
-                        print('less than 10')
-                        driver.back()
+                    if reviewCnt < 20:
+                        print('less than 20')
+                        #driver.back()
                         continue
                     
                     else:
@@ -150,7 +150,9 @@ class Review:
                         
                         firstBookClick = driver.find_element_by_css_selector('#schMid_wrap > div:nth-child(4) > div.goodsList.goodsList_list > table > tbody > tr:nth-child(1) > td.goods_infogrp > div.goods_rating > span.gd_reviewCount > a')
                         firstBookClick.send_keys(Keys.ENTER)
-                        reviewCorpus = Review.reviewTable_to_db().crawlReview()
+                        time.sleep(2)
+                        
+                        reviewCorpus = Review.crawlReview(driver)
                         print("finished {}".format(isbn13))
                         #values.append([isbn13, star, reviewCorpus])
                         
@@ -161,13 +163,13 @@ class Review:
                     
             except Exception as e:
                 print(e)
-
+        
 
     @staticmethod
     def get_reviews():
         mysql_db = mysql.conn_mysqldb()
         db_cursor = mysql_db.cursor()
-        sql = "SELECT * FROM Review LIMIT 3"
+        sql = "SELECT isbn13 FROM Review WHERE idx >5"
         db_cursor.execute(sql)
         reviews = db_cursor.fetchall()
         if not reviews:
@@ -178,7 +180,7 @@ if __name__ == '__main__':
     #Review().reviewTable_to_db()
     #res = Review().get_reviews()
     #print(res)
-    #print(Review().get_bookISBN())
+    #print(Review.get_bookISBN())
     #searchList = Review.get_bookISBN()
     #print(searchList)
     Review.reviewTable_to_db()

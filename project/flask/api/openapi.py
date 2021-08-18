@@ -71,8 +71,22 @@ class Aladin:
             return None
         return books
 
+    @staticmethod
+    def check_duplicates():
+        db = conn_mysqldb()
+        cur = db.cursor()
+        sql = "SELECT * FROM Book GROUP BY isbn13 HAVING COUNT(isbn13) > 1"
+        cur.execute(sql)
+        duplicates = cur.fetchall()
+        if not duplicates:
+            return None
+        return duplicates
+
+
 if __name__ == '__main__':
 
-    res = Aladin().get_book()
+    #res = Aladin().get_book()
     # res = Aladin().get_book()
-    print(res[0])
+    #print(res[0])
+    res = Aladin.check_duplicates()
+    print(res)
