@@ -5,7 +5,6 @@ from db_model.mysql import conn_mysqldb
 from decouple import config
 import sys
 
-
 class Recommend:
 
     # 별점 높은 순 추천
