@@ -28,10 +28,13 @@ def get_now_showing():
 def get_bookinfo():
     title = request.args.get('title')
     author = request.args.get('author')
-    isbn = request.args.get('isbn')
-    book_info = book.get_isbn_to_info(isbn)
-    book_info = book.get_title_to_info(title)
-    book_info = book.get_author_to_info(author)
+    isbn = request.args.get('isbn13')
+    if isbn:
+        book_info = book.get_isbn_to_info(isbn)
+    elif title:
+        book_info = book.get_title_to_info(title)
+    elif author:
+        book_info = book.get_author_to_info(author)
     return book_info
 
 

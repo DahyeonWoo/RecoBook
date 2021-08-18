@@ -2,7 +2,7 @@ import sys
 sys.path.append('./project/flask/')
 sys.path.append('./project/flask/api/')
 from api.db_model.mysql import conn_mysqldb
-from utils.CreateDict import create_dict
+from api.utils.CreateDict import create_dict
 
 class ColumnsFromDB:
     @staticmethod   

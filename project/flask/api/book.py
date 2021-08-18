@@ -1,12 +1,10 @@
 import sys
 import json
 sys.path.append('./project/flask/api')
-from db_model.mysql import conn_mysqldb
-from utils.ColumnsFromDB import *
-from utils.CreateDict import create_dict
-from utils.ColumnsFromDB import ColumnsFromDB
+from api.db_model.mysql import conn_mysqldb
+from api.utils.CreateDict import create_dict
+from api.utils.ColumnsFromDB import ColumnsFromDB
 
-table_name = "Book"
 
 def get_title_to_info(title):
     """
@@ -14,8 +12,7 @@ def get_title_to_info(title):
     :param title: 도서 제목
     :return: 도서 정보 딕셔너리
     """
-    dict = create_dict()
-    data = ColumnsFromDB.get_db_data('*', table_name, 'title', title)
+    data = ColumnsFromDB.get_db_data('*', "Book", 'title', title)
     return json.dumps(data, indent=2, default=str, ensure_ascii=False)
 
 def get_isbn_to_info(isbn13):
@@ -24,9 +21,8 @@ def get_isbn_to_info(isbn13):
     :param isbn13: 도서 ISBN13
     :return: 도서 정보 딕셔너리
     """
-    dict = create_dict()
-    dict = ColumnsFromDB.get_db_data('*', table_name, 'isbn13', isbn13)
-    return json.dumps(dict, indent=2, default=str, ensure_ascii=False)
+    data = ColumnsFromDB.get_db_data('*', "Book", 'isbn13', isbn13)
+    return json.dumps(data, indent=2, default=str, ensure_ascii=False)
 
 
 def get_author_to_info(name):
@@ -35,8 +31,7 @@ def get_author_to_info(name):
     :param name: 도서 작가
     :return: 도서 정보 딕셔너리
     """
-    dict = create_dict()
-    data = ColumnsFromDB.get_db_data('*', table_name, 'author', name) 
+    data = ColumnsFromDB.get_db_data('*', "Book", 'author', name) 
     return json.dumps(data, indent=2, default=str, ensure_ascii=False)
 
 
