@@ -2,7 +2,9 @@
 import json
 
 from api.db_model.mysql import conn_mysqldb
-from api.utils.ColumnsFromDB import get_db_data, get_col_name
+from api.utils.ColumnsFromDB import ColumnsFromDB
+
+table_name = 'User'
 
 class UserInfo:
     @staticmethod
