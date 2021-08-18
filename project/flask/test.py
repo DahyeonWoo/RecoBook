@@ -11,6 +11,7 @@ for key, value in dict.items():
     res = requests.get(BASE + f"bookinfo?{key}={value}")
     data = res.json()
     print(res, data)
+    print('\n')
 
 
 

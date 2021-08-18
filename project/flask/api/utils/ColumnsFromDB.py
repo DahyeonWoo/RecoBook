@@ -59,9 +59,9 @@ class ColumnsFromDB:
             return dict
 
 if __name__ == '__main__':
-    res = ColumnsFromDB.get_db_data('*', 'Book', 'title', '미스테리아') # done
+    # res = ColumnsFromDB.get_db_data('*', 'Book', 'title', '미스테리아') # done
     # print(res)
-    # res = get_db_data('isbn13, title', 'Book', 'title', '미스테리아') # done
+    res = ColumnsFromDB.get_db_data('isbn13, title', 'Book', 'title', '미스테리아') # done
     # print(res)
     # res = ColumnsFromDB.get_col_name('Book')
     # res = ColumnsFromDB.get_db_data('isbn13, title', 'Book', 'title', '미스테리아')
