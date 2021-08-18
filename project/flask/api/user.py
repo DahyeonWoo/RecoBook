@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import json
 
 from api.db_model.mysql import conn_mysqldb
