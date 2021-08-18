@@ -7,7 +7,6 @@ from api.user import UserInfo, UserAuthor, UserGenre, UserRead, UserWish
 from api.openapi import Aladin
 from api import book
 
-
 app = Flask(__name__)
 
 @app.route('/')

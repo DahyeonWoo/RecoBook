@@ -4,6 +4,9 @@ import json
 from api.KakaoEvent import KakaoEvent
 from api.KakaoText import KakaoText
 
+# from api.user import UserInfo, UserAuthor, UserGenre, UserRead, UserWish
+# from api import book
+
 # Flask 어플리케이션
 app = Flask(__name__)
 
@@ -109,6 +112,52 @@ def showHello():
     }
 
     return responseBody
+
+
+# 아이디 확인하기 (임의의 API)
+@app.route('/<bot_type>/userID', methods=['POST'])
+def get_userID(bot_type):
+    body = request.get_json()
+
+    if bot_type == "kakao":
+        body = request.get_json()
+        user_id = body['userRequest']['user']['id']
+
+        return KakaoText().send_response({"Answer":user_id})
+
+# 책장 보기
+@app.route('/<bot_type>/bookList', methods=['POST'])
+def get_bookList(bot_type):
+    body = request.get_json()
+
+    if bot_type == "kakao":
+        # Book = Aladin().get_book()
+        # print(Book.json())
+        return KakaoText().send_response({"Answer":Book.json()})
+
+@app.route('/user', methods=['POST'])
+def get_now_showing():
+    user = request.args.get('name')
+    user_info = UserInfo().get_user(user)
+    return user_info
+
+@app.route('/bookinfo', methods=['POST'])
+def get_bookinfo():
+    title = request.args.get('title')
+    author = request.args.get('author')
+    isbn = request.args.get('isbn13')
+    if isbn:
+        book_info = book.get_isbn_to_info(isbn)
+    elif title:
+        book_info = book.get_title_to_info(title)
+    elif author:
+        book_info = book.get_author_to_info(author)
+    return book_info
+
+
+@app.route('/genre', methods=['POST'])
+def post_genre():
+    pass
 
 
 if __name__ == '__main__':
