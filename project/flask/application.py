@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
-from flask import Flask, request, jsonify, abort
+import sys
+sys.path.append('./project/flask/api')
 import json
+from flask import Flask, request, jsonify, abort, render_template
 from api.KakaoEvent import KakaoEvent
 from api.KakaoText import KakaoText
+from api.user import UserInfo, UserAuthor, UserGenre, UserRead, UserWish
+from api.openapi import Aladin
+from api import book
 
-# from api.user import UserInfo, UserAuthor, UserGenre, UserRead, UserWish
-# from api import book
 
 # Flask 어플리케이션
 app = Flask(__name__)
@@ -13,7 +16,7 @@ app = Flask(__name__)
 @app.route('/', methods=['GET'])
 def index():
     # return 'hello', 200
-    return render_template('index.html')
+    return 'hello'
 
 
 # 챗봇 엔진 query 전송 API
@@ -135,13 +138,13 @@ def get_bookList(bot_type):
         # print(Book.json())
         return KakaoText().send_response({"Answer":Book.json()})
 
-@app.route('/user', methods=['POST'])
-def get_now_showing():
+@app.route('/userinfo', methods=['GET', 'POST'])
+def get_user_info():
     user = request.args.get('name')
     user_info = UserInfo().get_user(user)
     return user_info
 
-@app.route('/bookinfo', methods=['POST'])
+@app.route('/bookinfo', methods=['GET'])
 def get_bookinfo():
     title = request.args.get('title')
     author = request.args.get('author')
