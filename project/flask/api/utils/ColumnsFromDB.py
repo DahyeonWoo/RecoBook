@@ -36,7 +36,7 @@ class ColumnsFromDB:
             지정한 컬럼에 관한 정보를 불러오는 함수
             :params db_col: 조회할 컬럼명
             :params table_name: 테이블명
-            :params col: 
+            :params col: 조건 컬럼명
             :params param: 조건문에 들어갈 이름
 
             :return: 리스트
