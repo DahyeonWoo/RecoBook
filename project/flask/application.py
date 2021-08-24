@@ -141,8 +141,29 @@ def get_bookList(bot_type):
 @app.route('/userinfo', methods=['GET', 'POST'])
 def get_user_info():
     user = request.args.get('name')
-    user_info = UserInfo().get_user(user)
+    user_info = UserInfo.get_user(user)
     return user_info
+@app.route('/userinfo/bookRead', methods=['GET', 'POST'])
+def get_book_read():
+    if request.methods == 'GET':
+        user = request.args.get('name')
+        book_read = UserRead.get_read_book(user)
+        return book_read
+@app.route('/userinfo/bookWant', methods=['GET', 'POST'])
+def get_book_want():
+    user = request.args.get('name')
+    book_want = UserWish.get_book_want(user)
+    return book_want
+@app.route('/userinfo/interestAuthor', methods=['GET', 'POST'])
+def get_interest_author():
+    user = request.args.get('name')
+    interest_author = UserAuthor.get_interest_author(user)
+    return interest_author
+@app.route('/userinfo/interestGenre', methods=['GET', 'POST'])
+def get_interest_genre():
+    user = request.args.get('name')
+    interest_genre = UserGenre.get_interest_genre(user)
+    return interest_genre
 
 @app.route('/bookinfo', methods=['GET'])
 def get_bookinfo():
