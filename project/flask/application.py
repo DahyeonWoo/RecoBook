@@ -5,7 +5,6 @@ import json
 from flask import Flask, request, jsonify, abort
 from api.KakaoEvent import KakaoEvent
 from api.KakaoText import KakaoText
-from api.user import UserInfo, UserAuthor, UserGenre, UserRead, UserWish
 from api import book, create_app
 
 

@@ -1,24 +1,68 @@
+from flask.helpers import url_for
+from werkzeug.utils import redirect
 from api.user import *
 from flask import Blueprint, request
 
-bp = Blueprint('userinfo', __name__, url_prefix='/userinfo')
+userinfo_bp = Blueprint('userinfo', __name__, url_prefix='/userinfo/<name>')
 
-@bp.route('/<name>/')
+@userinfo_bp.route('/')
 def get_user_info(name):
     return UserInfo.get_user(name)
-
-@bp.route('/<name>/bookRead/')
+# 읽은 책
+@userinfo_bp.route('/bookRead/') # 조회
 def get_book_read(name):
     return UserRead.get_read_book(name)
+@userinfo_bp.route('/bookRead/delete') # 삭제
+def delete_book_read(name):
+    title = request.args.get('title')
+    UserRead.delete_read_book(name, title)
+    return redirect(url_for('userinfo.get_book_read', name=name))
+@userinfo_bp.route('/bookRead/insert') # 추가
+def insert_book_read(name):
+    title = request.args.get('title')
+    UserRead.insert_read_book(name, title)
+    return redirect(url_for('userinfo.get_book_read', name=name))
 
-@bp.route('/<name>/bookWant/')
+# 위시리스트
+@userinfo_bp.route('/bookWant/')
 def get_book_want(name):
     return UserWish.get_book_want(name)
+@userinfo_bp.route('/bookWant/delete')
+def delete_book_want(name):
+    title = request.args.get('title')
+    UserWish.delete_book_want(name, title)
+    return redirect(url_for('userinfo.get_book_want', name=name))
+@userinfo_bp.route('/bookWant/insert')
+def insert_book_want(name):
+    title = request.args.get('title')
+    UserWish.insert_book_want(name, title)
+    return redirect(url_for('userinfo.get_book_want', name=name))
     
-@bp.route('/<name>/interestAuthor/')
+@userinfo_bp.route('/interestAuthor/')
 def get_interest_author(name):
     return UserAuthor.get_interest_author(name)
+@userinfo_bp.route('/interestAuthor/delete')
+def delete_interest_author(name):
+    author = request.args.get('author')
+    UserAuthor.delete_interest_author(name, author)
+    return redirect(url_for('userinfo.get_interest_author', name=name))
+@userinfo_bp.route('/interestAuthor/insert')
+def insert_interest_author(name):
+    author = request.args.get('author')
+    UserAuthor.insert_interest_author(name, author)
+    return redirect(url_for('userinfo.get_interest_author', name=name))
 
-@bp.route('/<name>/interestGenre/')
+
+@userinfo_bp.route('/interestGenre/')
 def get_interest_genre(name):
     return UserGenre.get_interest_genre(name)
+@userinfo_bp.route('/interestGenre/delete')
+def delete_interest_genre(name):
+    genre = request.args.get('genre')
+    UserGenre.delete_interest_genre(name, genre)
+    return redirect(url_for('userinfo.get_interest_genre', name=name))
+@userinfo_bp.route('/interestGenre/insert')
+def insert_interest_genre(name):
+    genre = request.args.get('genre')
+    UserGenre.insert_interest_genre(name, genre)
+    return redirect(url_for('userinfo.get_interest_genre', name=name))

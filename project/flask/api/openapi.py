@@ -7,6 +7,9 @@ from decouple import config
 # from pymysql import PYMYSQL_DUPLICATE_ERROR
 
 class Aladin:
+    """
+    openAPI 및 크롤링 -> 도서 수집 자동화
+    """
 
     @staticmethod
     def post_book():

@@ -4,6 +4,7 @@ sys.path.append("./project/flask/")
 sys.path.append("./project/flask/api/")
 from api.db_model.mysql import conn_mysqldb
 from api.utils.CreateDict import create_dict
+from flask import url_for, redirect
 
 
 class ColumnsFromDB:
@@ -73,12 +74,13 @@ class ColumnsFromDB:
         """
         data = ColumnsFromDB.get_db_data(select_col, table_name, col, param)
         data = list(data.values())[0]
-        print(data)
+        print('db 데이터:', data)
         mysql_db = conn_mysqldb()
         db_cursor = mysql_db.cursor()
+        print(f'value:{value}')
         try:
             data = data.split(",")  # 해당 사용자의 데이터들을 리스트로 변환
-            if value not in data:  # 데이터이 이미 리스트에 있는지 확인
+            if value.replace(' ', '') not in data:  # 데이터이 이미 리스트에 있는지 확인
                 data.append(value)  # 리스트에 없는 경우 데이터 추가
                 sep_data = ",".join(data)  # 리스트를 ,구분 문자열로 변환
                 sql = f"UPDATE {table_name} SET {select_col} = '{sep_data}' WHERE {col} LIKE REPLACE('%{param}%', ' ', '')"  # 해당 사용자의 데이터 리스트를 업데이트할 쿼리문
@@ -108,13 +110,13 @@ class ColumnsFromDB:
         :params value: 삭제할 값
         """
         data = ColumnsFromDB.get_db_data(select_col, table_name, col, param)
-        data = list(data.values())[0]
-        print(data)
+        data = list(data.values())[0].replace(" ", "")
         mysql_db = conn_mysqldb()
         db_cursor = mysql_db.cursor()
+        print(f'value:{value}')
         try:
             data = data.split(",")
-            data.remove(value)
+            data.remove(value.replace(" ", ""))
         except (ValueError, AttributeError):  # 해당 책이 없는 경우
             print("삭제할 내용이 존재하지 않습니다")
             sql = f"UPDATE {table_name} SET {select_col} = NULLIF({select_col}, '')"
@@ -138,6 +140,6 @@ if __name__ == "__main__":
     # res = ColumnsFromDB.get_col_name('Book')
     # res = ColumnsFromDB.get_db_data('isbn13, title', 'Book', 'title', '미스테리아')
     # res = ColumnsFromDB.get_db_data('*', 'User', 'name', '이현준')
-    # res = ColumnsFromDB.insert_db_data('User', 'bookRead', 'name', '이현준', '30분 경영학')
-    res = ColumnsFromDB.delete_db_data("User", "bookRead", "name", "이현준", "30분 경영학")
+    res = ColumnsFromDB.insert_db_data('User', 'bookRead', 'name', '이현준', '30분 경영학')
+    # res = ColumnsFromDB.delete_db_data("User", "bookRead", "name", "이현준", "밝은밤")
     print(res)
