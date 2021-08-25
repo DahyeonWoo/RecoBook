@@ -6,6 +6,9 @@ from decouple import config
 import pymysql
 
 class Aladin:
+    """
+    openAPI 및 크롤링 -> 도서 수집 자동화
+    """
 
     @staticmethod
     def post_book():
