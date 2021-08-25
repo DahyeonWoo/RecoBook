@@ -1,0 +1,7 @@
+.DS_Store
+bookcode/
+mysql.py
+mongodb.py
+settings.ini
+__pycache__
+.ipynb_checkpoints
