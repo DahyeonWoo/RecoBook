@@ -73,14 +73,16 @@ class ColumnsFromDB:
         :params value: 삽입할 값
         """
         data = ColumnsFromDB.get_db_data(select_col, table_name, col, param)
-        data = list(data.values())[0]
         print('db 데이터:', data)
         mysql_db = conn_mysqldb()
         db_cursor = mysql_db.cursor()
         print(f'value:{value}')
         try:
+            data = list(data.values())[0].replace(" ", "")
             data = data.split(",")  # 해당 사용자의 데이터들을 리스트로 변환
-            if value.replace(' ', '') not in data:  # 데이터이 이미 리스트에 있는지 확인
+            data = list(set(data))
+            print('변환 후 db 데이터:', data)
+            if value.replace(' ', '') not in data:  # 데이터가 이미 리스트에 있는지 확인
                 data.append(value)  # 리스트에 없는 경우 데이터 추가
                 sep_data = ",".join(data)  # 리스트를 ,구분 문자열로 변환
                 sql = f"UPDATE {table_name} SET {select_col} = '{sep_data}' WHERE {col} LIKE REPLACE('%{param}%', ' ', '')"  # 해당 사용자의 데이터 리스트를 업데이트할 쿼리문
@@ -91,11 +93,11 @@ class ColumnsFromDB:
             else:  # 해당 사용자의 데이터 리스트에 추가할 책이 있을 경우
                 print("이미 존재합니다.")
         except AttributeError:  # 해당 사용자의 데이터 리스트가 없을 경우
-            sql = f"UPDATE {table_name} SET {select_col} = %s WHERE {col} LIKE REPLACE('%{param}%', ' ', '')"  # 해당 사용자의 데이터 리스트를 업데이트할 쿼리문
-            db_cursor.execute(sql, (value))  # 해당 사용자의 데이터 리스트를 업데이트
+            sql = f"UPDATE {table_name} SET {select_col} = '{value}' WHERE {col} LIKE REPLACE('%{param}%', ' ', '')"  # 해당 사용자의 데이터 리스트를 업데이트할 쿼리문
+            db_cursor.execute(sql)  # 해당 사용자의 데이터 리스트를 업데이트
             mysql_db.commit()  # 트랜잭션 저장
             db_cursor.close()
-            print("책 추가 완료")
+            print("추가 완료")
         finally:
             db_cursor.close()
 
@@ -110,11 +112,12 @@ class ColumnsFromDB:
         :params value: 삭제할 값
         """
         data = ColumnsFromDB.get_db_data(select_col, table_name, col, param)
-        data = list(data.values())[0].replace(" ", "")
+        
         mysql_db = conn_mysqldb()
         db_cursor = mysql_db.cursor()
         print(f'value:{value}')
         try:
+            data = list(data.values())[0].replace(" ", "")
             data = data.split(",")
             data.remove(value.replace(" ", ""))
         except (ValueError, AttributeError):  # 해당 책이 없는 경우

@@ -37,7 +37,8 @@ def insert_book_want(name):
     title = request.args.get('title')
     UserWish.insert_book_want(name, title)
     return redirect(url_for('userinfo.get_book_want', name=name))
-    
+
+# 선호작가
 @userinfo_bp.route('/interestAuthor/')
 def get_interest_author(name):
     return UserAuthor.get_interest_author(name)
@@ -52,7 +53,7 @@ def insert_interest_author(name):
     UserAuthor.insert_interest_author(name, author)
     return redirect(url_for('userinfo.get_interest_author', name=name))
 
-
+# 선호장르
 @userinfo_bp.route('/interestGenre/')
 def get_interest_genre(name):
     return UserGenre.get_interest_genre(name)
