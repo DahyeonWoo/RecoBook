@@ -104,7 +104,7 @@ class ColumnsFromDB:
     @staticmethod
     def delete_db_data(table_name, select_col, col, param, value):
         """
-        db 데이터를 삭제하는 함수 함수
+        db 데이터를 삭제하는 함수
         :params table_name: 테이블명
         :params select_col: SELECT 절에 입력할 컬럼
         :params col: WHERE 절에 입력할 컬럼
