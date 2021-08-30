@@ -149,5 +149,52 @@ def get_bookinfo():
     return book_info
 
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5001, debug=True)
+@app.route('/genre', methods=['POST'])
+def post_genre():
+    pass
+
+@app.route('/recommendation/title',methods=['POST'])    
+def recommendation_title():
+    req = request.get_json()
+    
+    title = req["action"]["detailParams"]["title"]["value"]
+    answer = recommendation.recommend_by_title(title)
+    
+    res = {
+        "version" : "2.0",
+        "template":{
+            "outputs":[
+                {
+                	"simpleText":{
+                    	"text" : answer
+			        }
+           	    }
+            ]
+        }
+    }
+    return jsonify(res)
+
+@app.route('/recommendation/author',methods=['POST'])    
+def recommendation_author():
+    req = request.get_json()
+    
+    author = req["action"]["detailParams"]["author"]["value"]
+    answer = recommendation.recommend_by_author(author)
+    
+    res = {
+        "version" : "2.0",
+        "template":{
+            "outputs":[
+                {
+                	"simpleText":{
+                    	"text" : answer
+			        }
+           	    }
+            ]
+        }
+    }
+    return jsonify(res)
+
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5001)

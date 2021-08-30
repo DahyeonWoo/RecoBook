@@ -6,7 +6,6 @@ from db_model import mysql
 import csv
 
 import os
-#from bs4 import BeautifulSoup
 from urllib.request import urlopen
 import pandas as pd
 import numpy as np
@@ -114,7 +113,7 @@ class Review:
         #values = list()
         star = 0
 
-        for i in range(151,201):
+        for i in range(550,601):
             isbn13 = bList[i]
             print(isbn13)
             #검색창

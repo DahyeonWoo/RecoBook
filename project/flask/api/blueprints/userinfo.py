@@ -2,7 +2,11 @@ from flask.helpers import url_for
 from werkzeug.utils import redirect
 from api.user import *
 from flask import Blueprint, request
-
+"""
+userinfo.py
+유저 정보 조회 또는
+읽은 책, 위시리스트, 선호 작가, 선호 장르에 대한 조회, 삭제, 추가 API
+"""
 userinfo_bp = Blueprint("userinfo", __name__, url_prefix="/userinfo/<name>")
 
 
