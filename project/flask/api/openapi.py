@@ -3,10 +3,12 @@ import requests
 import json
 from db_model.mysql import conn_mysqldb
 from decouple import config
-# from flask import IntegrityError
-# from pymysql import PYMYSQL_DUPLICATE_ERROR
+import pymysql
 
 class Aladin:
+    """
+    openAPI 및 크롤링 -> 도서 수집 자동화
+    """
 
     @staticmethod
     def post_book():
@@ -14,7 +16,7 @@ class Aladin:
         db_cursor = db.cursor()
         ttbkey = config('TTBKEY')
         url = f"http://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey="+str(ttbkey)+"&QueryType=Bestseller&MaxResults=30" \
-        "&start=23&SearchTarget=Book&output=js&Version=20131101&CategoryId=0" # 8번행 건너뜀 # 18번 error #21번 건너뜀 # 시나공 책 하나 제외 21번 중복 # 22번 중복
+        "&start=25&SearchTarget=Book&output=js&Version=20131101&CategoryId=0" # 8번행 건너뜀 # 18번 error #21번 건너뜀 # 시나공 책 하나 제외 21번 중복 # 22번 중복
         
         bookList = requests.get(url).json()
         
@@ -35,25 +37,10 @@ class Aladin:
             category = bookList['item'][i]['categoryName'] #str
             bestRank = bookList['item'][i]['bestRank'] #int
 
-            # print(isbn13,title,link,author,publishDate,description,publisher,priceStandard,stockStatus,cover,salesPoint,adult,customerReviewRank,category,bestRank)
-            # sql = """INSERT INTO Book(isbn13,title,link,author,publishDate,description,publisher,priceStandard,stockStatus,cover,salesPoint,adult,customerReviewRank,category,bestRank) values(${isbn13},${title},${link},${author},${publishDate},${description},${publisher},${priceStandard},${stockStatus},${cover},${salesPoint},${adult},${customerReviewRank},${category},${bestRank})"""
-            # """ % (isbn13,title,link,author,publishDate,description,publisher,priceStandard,stockStatus,cover,salesPoint,adult,customerReviewRank,category,bestRank)
-            # sql = "INSERT INTO Book(isbn13,title,link,author,publishDate,description,publisher,priceStandard,stockStatus,cover,salesPoint,adult,customerReviewRank,category,bestRank) values("+isbn13+","+title+","+link+","+author+","+publishDate+","+description+","+publisher+","+priceStandard+","+stockStatus+","+cover+","+salesPoint+","+adult+","+customerReviewRank+","+category+","+bestRank+")"
+                        
             sql = """INSERT INTO Book(isbn13,title,link,author,publishDate,description,publisher,priceStandard,stockStatus,cover,salesPoint,adult,customerReviewRank,category,bestRank) 
             values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
             """
-            # try:
-            #     try:
-            #         db_cursor.execute(sql,(isbn13,title,link,author,publishDate,description,publisher,priceStandard,stockStatus,cover,salesPoint,adult,customerReviewRank,category,bestRank))
-            #         db.commit()
-            #     except IntegrityError as e:
-            #         if e.args[0] == PYMYSQL_DUPLICATE_ERROR:
-            #             print(e)
-            #             pass
-            #         else:
-            #             raise
-            # except Exception as e:
-            #     print(e)
             
             db_cursor.execute(sql,(isbn13,title,link,author,publishDate,description,publisher,priceStandard,stockStatus,cover,salesPoint,adult,customerReviewRank,category,bestRank))
             db.commit()
@@ -71,8 +58,23 @@ class Aladin:
             return None
         return books
 
+    @staticmethod
+    def check_duplicates():
+        db = conn_mysqldb()
+        cur = db.cursor()
+        sql = "SELECT * FROM Book GROUP BY isbn13 HAVING COUNT(isbn13) > 1"
+        cur.execute(sql)
+        duplicates = cur.fetchall()
+        if not duplicates:
+            return None
+        return duplicates
+
+
 if __name__ == '__main__':
 
-    res = Aladin().get_book()
+    #res = Aladin().get_book()
     # res = Aladin().get_book()
-    print(res[0])
+    #print(res[0])
+    #res = Aladin.check_duplicates()
+    #print(res)
+    Aladin.post_book()
