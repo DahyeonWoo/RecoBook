@@ -8,15 +8,106 @@ from api.KakaoEvent import KakaoEvent
 from api.KakaoText import KakaoText
 from api import book, create_app
 from api.recommendations import recommend_by_title, recommend_by_author
+from api.user import *
 
 # Flask 어플리케이션
 app = create_app()
 
 
-@app.route("/", methods=["GET"])
-def index():
-    # return 'hello', 200
-    return "hello"
+# 유저 정보 조회
+@app.route("/userinfo/<idx>/", methods=["POST"])
+def get_user_info(idx):
+    return UserInfo.get_user(idx)
+
+# 유저 정보 조회
+@app.route("/<bot_type>/user/get/<reqinfo>", methods=["POST"])
+def get_book_read(bot_type,reqinfo):
+    body = request.get_json()
+    try:
+        if bot_type == "kakao":
+            # utterance = body["userRequest"]["utterance"]
+            # ret = get_answer_from_engine(bottype=bot_type, query=utterance)
+            idx = body["userRequest"]["user"]["id"]
+
+            userinfo = UserInfo.get_user(idx)
+            result = json.loads(userinfo)
+
+            name = result["name"]
+            bookRead = result["bookRead"]
+            bookWant = result['bookWant']
+            interestBook = result["interestBook"]
+            interestAuthor = result["interestAuthor"]
+            interestCategory = result["interestCategory"]
+
+            if reqinfo == "bookRead":
+                if bookRead != None and len(bookRead) != 0:
+                    answer = name+", 지금까지 <"+bookRead+">를 읽었네. 좋아!"
+                else:
+                    answer = "우선 읽은 책을 등록해줘"
+            elif reqinfo == "bookWant":
+                if bookWant != None and len(bookWant) != 0:
+                    answer = name+", 읽고 싶은 책이 <"+bookWant+">야."
+                else:
+                    answer = "우선 읽고 싶은 책을 등록해줘"
+            elif reqinfo == "interestBook":
+                if interestBook != None and len(interestBook) != 0:
+                    answer = name+", <"+interestBook+"> 책을 좋아해."
+                else:
+                    answer = "우선 관심 책을 등록해줘"
+            elif reqinfo == "interestAuthor":
+                if interestAuthor != None and len(interestAuthor) != 0:
+                    answer = name+", <"+interestAuthor+"> 작가를 좋아해."
+                else:
+                    answer = "우선 관심 작가를 등록해줘"
+            elif reqinfo == "interestCategory":
+                if interestCategory != None and len(interestCategory) != 0:
+                    answer = name+", <"+interestCategory+"> 장르를 좋아해."
+                else:
+                    answer = "우선 관심 분야를 등록해줘"
+            else:
+                answer = "더 많은 기능을 기대해줘!"
+            return KakaoText().send_response({"Answer": answer})
+        elif bot_type == "naver":
+            return json.dumps({}), 200
+        else:
+            abort(404)
+    except Exception as ex:
+        abort(500)
+        print(Exception)
+
+# 책 정보 조회
+@app.route("/bookinfo", methods=["GET"])
+def get_bookinfo():
+    title = request.args.get("title")
+    author = request.args.get("author")
+    isbn = request.args.get("isbn13")
+    if isbn:
+        book_info = book.get_isbn_to_info(isbn)
+    elif title:
+        book_info = book.get_title_to_info(title)
+    elif author:
+        book_info = book.get_author_to_info(author)
+    return book_info
+
+# 제목 기반 추천
+@app.route('/title', methods=['POST'])
+def recommendation_title():
+    req = request.get_json()
+
+    title = req["action"]["detailParams"]["title"]["value"]
+    answer = recommend_by_title(title)
+
+    return KakaoText().send_response({"Answer": "너에게 딱 맞는 추천 목록이야\n" + answer})
+
+# 작가 기반 추천
+@app.route('/author', methods=['POST'])
+def recommendation_author():
+    req = request.get_json()
+
+    author = req["action"]["detailParams"]["author"]["value"]
+    answer = recommend_by_author(author)
+
+    return KakaoText().send_response({"Answer": "너에게 딱 맞는 추천 목록이야\n" + answer})
 
 
 # 챗봇 엔진 query 전송 API
@@ -122,81 +213,6 @@ def get_userID(bot_type):
         user_id = body["userRequest"]["user"]["id"]
 
         return KakaoText().send_response({"Answer": user_id})
-
-
-# 책장 보기
-@app.route("/<bot_type>/bookList", methods=["POST"])
-def get_bookList(bot_type):
-    body = request.get_json()
-
-    if bot_type == "kakao":
-        # Book = Aladin().get_book()
-        # print(Book.json())
-        return KakaoText().send_response({"Answer": Book.json()})
-
-
-@app.route("/bookinfo", methods=["GET"])
-def get_bookinfo():
-    title = request.args.get("title")
-    author = request.args.get("author")
-    isbn = request.args.get("isbn13")
-    if isbn:
-        book_info = book.get_isbn_to_info(isbn)
-    elif title:
-        book_info = book.get_title_to_info(title)
-    elif author:
-        book_info = book.get_author_to_info(author)
-    return book_info
-
-
-@app.route('/genre', methods=['POST'])
-def post_genre():
-    pass
-
-
-@app.route('/title', methods=['POST'])
-def recommendation_title():
-    req = request.get_json()
-    print(req)
-
-    title = req["action"]["detailParams"]["title"]["value"]
-    answer = recommend_by_title(title)
-
-    res = {
-        "version": "2.0",
-        "template": {
-            "outputs": [
-                {
-                    "simpleText": {
-                        "text": answer
-                    }
-                }
-            ]
-        }
-    }
-    return jsonify(res)
-
-
-@app.route('/author', methods=['POST'])
-def recommendation_author():
-    req = request.get_json()
-
-    author = req["action"]["detailParams"]["author"]["value"]
-    answer = recommend_by_author(author)
-
-    res = {
-        "version": "2.0",
-        "template": {
-            "outputs": [
-                {
-                    "simpleText": {
-                        "text": answer
-                    }
-                }
-            ]
-        }
-    }
-    return jsonify(res)
 
 
 if __name__ == '__main__':

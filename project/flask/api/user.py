@@ -48,44 +48,44 @@ class UserInfo:
         db_cursor.close()
 
     @staticmethod
-    def get_user(name: str):
+    def get_user(idx: int):
         """
         유저 정보를 가져오는 함수
         :params name: 유저의 이름
         :return: 유저 정보
         """
-        user = ColumnsFromDB.get_db_data("*", "User", "name", name)
+        user = ColumnsFromDB.get_db_data("*", "User", "idx", idx)
         return json.dumps(user, indent=2, default=str, ensure_ascii=False)
 
 
 class UserRead:
     @staticmethod
-    def get_read_book(user_name):
+    def get_read_book(idx: int):
         """
         읽은 책 리스트를 가져오는 함수
-        :params user_name: 유저의 이름 
+        :params idx: 유저의 인덱스
         :return: 읽은 책 리스트
         """
-        user = ColumnsFromDB.get_db_data("bookRead", "User", "name", user_name)
+        user = ColumnsFromDB.get_db_data("bookRead", "User", "idx", idx)
         return json.dumps(user, indent=2, default=str, ensure_ascii=False)
 
     @staticmethod
-    def insert_read_book(user_name, title):
+    def insert_read_book(idx:int, title:str):
         """
         읽은 책을 추가하는 함수
         :params name: 사용자의 이름
         :params title: 추가할 책 이름
         """
-        ColumnsFromDB.insert_db_data("User", "bookRead", "name", user_name, title)
+        ColumnsFromDB.insert_db_data("User", "bookRead", "name", idx, title)
 
     @staticmethod
-    def delete_read_book(user_name, title):
+    def delete_read_book(user_idx, title):
         """
         읽은 책 삭제하는 함수
-        :params name: 사용자의 이름
+        :params idx: 사용자의 인덱스
         :params book: 삭제할 책 이름
         """
-        ColumnsFromDB.delete_db_data("User", "bookRead", "name", user_name, title)
+        ColumnsFromDB.delete_db_data("User", "bookRead", "idx", user_idx, title)
 
 
 class UserWish:
@@ -93,7 +93,7 @@ class UserWish:
     def get_book_want(user_name):
         """
         위시 리스트를 가져오는 함수
-        :params user_name: 유저의 이름 
+        :params user_name: 유저의 이름
         :return: 위시 리스트
         """
         book_want = ColumnsFromDB.get_db_data("bookWant", "User", "name", user_name)

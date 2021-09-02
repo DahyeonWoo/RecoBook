@@ -44,7 +44,7 @@ class ColumnsFromDB:
         """
         mysql_db = conn_mysqldb()
         db_cursor = mysql_db.cursor()
-        sql = f"SELECT {db_col} FROM {table_name} WHERE {col} LIKE REPLACE('%{param}%', ' ', '')"
+        sql = f"SELECT {db_col} FROM {table_name} WHERE {col} = {param}"
         db_cursor.execute(sql)
         db_data = db_cursor.fetchone()
         db_cursor.close()
