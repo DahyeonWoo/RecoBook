@@ -153,44 +153,46 @@ def get_bookinfo():
 def post_genre():
     pass
 
-@app.route('/title',methods=['POST'])    
+
+@app.route('/title', methods=['POST'])
 def recommendation_title():
     req = request.get_json()
     print(req)
-    
+
     title = req["action"]["detailParams"]["title"]["value"]
     answer = recommend_by_title(title)
 
     res = {
-        "version" : "2.0",
-        "template":{
-            "outputs":[
+        "version": "2.0",
+        "template": {
+            "outputs": [
                 {
-                	"simpleText":{
-                    	"text" : answer
-			        }
-           	    }
+                    "simpleText": {
+                        "text": answer
+                    }
+                }
             ]
         }
     }
     return jsonify(res)
 
-@app.route('/author',methods=['POST'])    
+
+@app.route('/author', methods=['POST'])
 def recommendation_author():
     req = request.get_json()
-    
+
     author = req["action"]["detailParams"]["author"]["value"]
     answer = recommend_by_author(author)
 
     res = {
-        "version" : "2.0",
-        "template":{
-            "outputs":[
+        "version": "2.0",
+        "template": {
+            "outputs": [
                 {
-                	"simpleText":{
-                    	"text" : answer
-			        }
-           	    }
+                    "simpleText": {
+                        "text": answer
+                    }
+                }
             ]
         }
     }
