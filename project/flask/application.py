@@ -7,7 +7,7 @@ from flask import Flask, request, jsonify, abort
 from api.KakaoEvent import KakaoEvent
 from api.KakaoText import KakaoText
 from api import book, create_app
-
+from api.recommendations import recommend_by_title, recommend_by_author
 
 # Flask 어플리케이션
 app = create_app()
@@ -153,13 +153,14 @@ def get_bookinfo():
 def post_genre():
     pass
 
-@app.route('/recommendation/title',methods=['POST'])    
+@app.route('/title',methods=['POST'])    
 def recommendation_title():
     req = request.get_json()
+    print(req)
     
     title = req["action"]["detailParams"]["title"]["value"]
-    answer = recommendation.recommend_by_title(title)
-    
+    answer = recommend_by_title(title)
+
     res = {
         "version" : "2.0",
         "template":{
@@ -174,13 +175,13 @@ def recommendation_title():
     }
     return jsonify(res)
 
-@app.route('/recommendation/author',methods=['POST'])    
+@app.route('/author',methods=['POST'])    
 def recommendation_author():
     req = request.get_json()
     
     author = req["action"]["detailParams"]["author"]["value"]
-    answer = recommendation.recommend_by_author(author)
-    
+    answer = recommend_by_author(author)
+
     res = {
         "version" : "2.0",
         "template":{
