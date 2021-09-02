@@ -6,7 +6,7 @@ import json
 from flask import Flask, request, jsonify, abort
 from api.KakaoEvent import KakaoEvent
 from api.KakaoText import KakaoText
-from api import book, create_app
+from api import book, create_app, recommendation
 
 
 # Flask 어플리케이션

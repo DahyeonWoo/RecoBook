@@ -5,13 +5,13 @@ import requests
 
 BASE = "http://0.0.0.0:5001/"
 
-dict = {'author': "이지은", 'title': "금각사", 'isbn13': "9788925588643"}
+# dict = {'author': "이지은", 'title': "금각사", 'isbn13': "9788925588643"}
 
-for key, value in dict.items():
-    res = requests.get(BASE + f"bookinfo?{key}={value}")
-    data = res.json()
-    print(res, data)
-    print('\n')
+# for key, value in dict.items():
+#     res = requests.get(BASE + f"bookinfo?{key}={value}")
+#     data = res.json()
+#     print(res, data)
+#     print('\n')
 
 
 
