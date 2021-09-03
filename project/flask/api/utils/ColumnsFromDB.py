@@ -49,7 +49,8 @@ class ColumnsFromDB:
         db_data = db_cursor.fetchone()
         db_cursor.close()
         total_db_col = ColumnsFromDB.get_col_name(table_name)
-        col_list = db_col.split(";")
+        col_list = db_col.split(",")
+        print(col_list)
         dict = create_dict()
         if db_col == "*":
             for i in range(len(total_db_col)):
@@ -84,7 +85,8 @@ class ColumnsFromDB:
             print("변환 후 db 데이터:", data)
             if value.replace(" ", "") not in data:  # 데이터가 이미 리스트에 있는지 확인
                 data.append(value)  # 리스트에 없는 경우 데이터 추가
-                sep_data = ";".join(data)  # 리스트를 ,구분 문자열로 변환
+                sep_data = ";".join(data)  # 리스트를 ;구분 문자열로 변환
+                print(sep_data)
                 sql = f"UPDATE {table_name} SET {select_col} = '{sep_data}' WHERE {col} LIKE REPLACE('%{param}%', ' ', '')"  # 해당 사용자의 데이터 리스트를 업데이트할 쿼리문
                 db_cursor.execute(sql)  # 해당 사용자의 데이터 리스트를 업데이트
                 mysql_db.commit()  # 트랜잭션 저장
@@ -142,7 +144,7 @@ if __name__ == "__main__":
     # print(res)
     # res = ColumnsFromDB.get_col_name('Book')
     # res = ColumnsFromDB.get_db_data('isbn13, title', 'Book', 'title', '미스테리아')
-    # res = ColumnsFromDB.get_db_data('*', 'User', 'name', '이현준')
-    res = ColumnsFromDB.insert_db_data("User", "bookRead", "name", "이현준", "30분 경영학")
+    # res = ColumnsFromDB.get_db_data('bookRead', 'User', 'name', '이현준')
+    # res = ColumnsFromDB.insert_db_data("User", "bookRead", "name", "이현준", "30분 경영학")
     # res = ColumnsFromDB.delete_db_data("User", "bookRead", "name", "이현준", "밝은밤")
     print(res)
