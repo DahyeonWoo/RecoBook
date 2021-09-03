@@ -11,43 +11,6 @@ from api.utils.ColumnsFromDB import ColumnsFromDB
 
 class UserInfo:
     @staticmethod
-    def post_user(
-        name,
-        birthday,
-        age,
-        gender,
-        bookRead,
-        bookWant,
-        interestBook,
-        interestAuthor,
-        interestCategory,
-    ):
-        """
-        유저 정보를 업데이트 하는 함수
-        """
-        db = conn_mysqldb()
-        db_cursor = db.cursor()
-        sql = """INSERT INTO User(name, birthday, age, gender, bookRead, bookWant, interestBook, interestAuthor,interestCategory) 
-            values (%s,%s,%s,%s,%s,%s,%s,%s,%s)
-            """
-        db_cursor.execute(
-            sql,
-            (
-                name,
-                birthday,
-                age,
-                gender,
-                bookRead,
-                bookWant,
-                interestBook,
-                interestAuthor,
-                interestCategory,
-            ),
-        )
-        db.commit()
-        db_cursor.close()
-
-    @staticmethod
     def get_user_info(idx: int):
         """
         유저 정보를 가져오는 함수
