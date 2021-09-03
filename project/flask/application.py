@@ -16,12 +16,12 @@ app = create_app()
 
 # 유저 정보 조회
 @app.route("/userinfo/<idx>/", methods=["POST"])
-def get_user_info(idx):
+def get_user_info_all(idx):
     return UserInfo.get_user(idx)
 
 # 유저 정보 조회
 @app.route("/<bot_type>/user/get/<reqinfo>", methods=["POST"])
-def get_book_read(bot_type,reqinfo):
+def get_user_info(bot_type,reqinfo):
     body = request.get_json()
     try:
         if bot_type == "kakao":
@@ -29,7 +29,7 @@ def get_book_read(bot_type,reqinfo):
             # ret = get_answer_from_engine(bottype=bot_type, query=utterance)
             idx = body["userRequest"]["user"]["id"]
 
-            userinfo = UserInfo.get_user(idx)
+            userinfo = UserInfo.get_user_info(idx)
             result = json.loads(userinfo)
 
             name = result["name"]
@@ -65,7 +65,7 @@ def get_book_read(bot_type,reqinfo):
                 else:
                     answer = "우선 관심 분야를 등록해줘"
             else:
-                answer = "더 많은 기능을 기대해줘!"
+                answer = "레꼬북에 없는 기능이야. 계속 개발중이니까, 더 많은 기능을 기대해줘!"
             return KakaoText().send_response({"Answer": answer})
         elif bot_type == "naver":
             return json.dumps({}), 200
@@ -75,19 +75,119 @@ def get_book_read(bot_type,reqinfo):
         abort(500)
         print(Exception)
 
-# 책 정보 조회
-@app.route("/bookinfo", methods=["GET"])
-def get_bookinfo():
-    title = request.args.get("title")
-    author = request.args.get("author")
-    isbn = request.args.get("isbn13")
-    if isbn:
-        book_info = book.get_isbn_to_info(isbn)
-    elif title:
-        book_info = book.get_title_to_info(title)
-    elif author:
-        book_info = book.get_author_to_info(author)
-    return book_info
+# 유저 정보 수정
+@app.route("/<bot_type>/user/insert/<reqinfo>", methods=["POST"])
+def insert_user_info(bot_type,reqinfo):
+    body = request.get_json()
+    try:
+        if bot_type == "kakao":
+            # utterance = body["userRequest"]["utterance"]
+            # ret = get_answer_from_engine(bottype=bot_type, query=utterance)
+            idx = body["userRequest"]["user"]["id"]
+
+            if reqinfo == "bookRead":
+                title = body["action"]["detailParams"]["title"]["value"]
+                result = UserInfo.insert_user_info(idx, reqinfo, title)
+                print(result)
+                if result == 1:
+                    answer = "읽은 책으로 <"+title+">가 등록됐어."
+                elif result == 2:
+                    answer = "이미 읽은 책으로 등록한 도서야"
+            elif reqinfo == "bookWant":
+                title = body["action"]["detailParams"]["title"]["value"]
+                result = UserInfo.insert_user_info(idx, reqinfo, title)
+                if result == 1:
+                    answer = "위시리스트에 <"+title+">가 등록됐어"
+                elif result == 2:
+                    answer = "이미 위시리스트에 등록한 도서야."
+            elif reqinfo == "interestBook":
+                title = body["action"]["detailParams"]["title"]["value"]
+                result = UserInfo.insert_user_info(idx, reqinfo, title)
+                if result == 1:
+                    answer = "관심 도서에 <"+title+">가 등록됐어"
+                elif result == 2:
+                    answer = "이미 등록한 관심 도서야."
+            elif reqinfo == "interestAuthor":
+                author = body["action"]["detailParams"]["author"]["value"]
+                result = UserInfo.insert_user_info(idx, reqinfo, author)
+                if result == 1:
+                    answer = "관심 작가에 <"+author+">가 등록됐어"
+                elif result == 2:
+                    answer = "이미 등록한 관심 작가야"
+            elif reqinfo == "interestCategory":
+                genre = body["action"]["detailParams"]["genre"]["value"]
+                result = UserInfo.insert_user_info(idx, reqinfo, genre)
+                if result == 1:
+                    answer = "관심 장르에 <"+genre+">가 등록됐어"
+                elif result == 2:
+                    answer = "이미 등록한 관심 장르야"
+            else:
+                answer = "레꼬북에 없는 기능이야. 계속 개발중이니까, 더 많은 기능을 기대해줘!"
+            return KakaoText().send_response({"Answer": answer})
+        elif bot_type == "naver":
+            return json.dumps({}), 200
+        else:
+            abort(404)
+    except Exception as ex:
+        abort(500)
+        print(Exception)
+
+
+# 유저 정보 삭제
+@app.route("/<bot_type>/user/delete/<reqinfo>", methods=["POST"])
+def update_user_info(bot_type,reqinfo):
+    body = request.get_json()
+    try:
+        if bot_type == "kakao":
+            # utterance = body["userRequest"]["utterance"]
+            # ret = get_answer_from_engine(bottype=bot_type, query=utterance)
+            idx = body["userRequest"]["user"]["id"]
+
+            if reqinfo == "bookRead":
+                title = body["action"]["detailParams"]["title"]["value"]
+                result = UserInfo.update_user_info(idx, reqinfo, title)
+                if result == 1:
+                    answer = "읽은 책 목록에서 <"+title+">를 삭제했어"
+                elif result == 2:
+                    answer = "등록하지 않은 책은 삭제할 수 없어"
+            elif reqinfo == "bookWant":
+                title = body["action"]["detailParams"]["title"]["value"]
+                result = UserInfo.update_user_info(idx, reqinfo, title)
+                if result == 1:
+                    answer = "위시리스트에서 <"+title+">를 삭제했어"
+                elif result == 2:
+                    answer = "등록하지 않은 책은 삭제할 수 없어"
+            elif reqinfo == "interestBook":
+                title = body["action"]["detailParams"]["title"]["value"]
+                result = UserInfo.update_user_info(idx, reqinfo, title)
+                if result == 1:
+                    answer = "관심 책 목록에서 <"+title+">를 삭제했어"
+                elif result == 2:
+                    answer = "등록하지 않은 책은 삭제할 수 없어"
+            elif reqinfo == "interestAuthor":
+                author = body["action"]["detailParams"]["author"]["value"]
+                result = UserInfo.update_user_info(idx, reqinfo, author)
+                if result == 1:
+                    answer = "관심 작가 목록에서 <"+author+">를 삭제했어"
+                elif result == 2:
+                    answer = "등록하지 않은 작가는 삭제할 수 없어"
+            elif reqinfo == "interestCategory":
+                genre = body["action"]["detailParams"]["genre"]["value"]
+                result = UserInfo.update_user_info(idx, reqinfo, genre)
+                if result == 1:
+                    answer = "관심 장르 목록에서 <"+genre+">를 삭제했어"
+                elif result == 2:
+                    answer = "등록하지 않은 장르는 삭제할 수 없어"
+            else:
+                answer = "레꼬북에 없는 기능이야. 계속 개발중이니까, 더 많은 기능을 기대해줘!"
+            return KakaoText().send_response({"Answer": answer})
+        elif bot_type == "naver":
+            return json.dumps({}), 200
+        else:
+            abort(404)
+    except Exception as ex:
+        abort(500)
+        print(Exception)
 
 # 제목 기반 추천
 @app.route('/title', methods=['POST'])
@@ -213,6 +313,20 @@ def get_userID(bot_type):
         user_id = body["userRequest"]["user"]["id"]
 
         return KakaoText().send_response({"Answer": user_id})
+
+# 책 정보 조회
+@app.route("/bookinfo", methods=["GET"])
+def get_bookinfo():
+    title = request.args.get("title")
+    author = request.args.get("author")
+    isbn = request.args.get("isbn13")
+    if isbn:
+        book_info = book.get_isbn_to_info(isbn)
+    elif title:
+        book_info = book.get_title_to_info(title)
+    elif author:
+        book_info = book.get_author_to_info(author)
+    return book_info
 
 
 if __name__ == '__main__':

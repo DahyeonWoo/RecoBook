@@ -53,7 +53,7 @@ def get_title_to_review(title):
     WHERE title 
     LIKE %s
     """
-    cursor.execute(sql, f"%{title}%")
+    #cursor.execute(sql, f"%{title}%")
     book_info = cursor.fetchone()
     if not book_info:
         return None

@@ -48,14 +48,34 @@ class UserInfo:
         db_cursor.close()
 
     @staticmethod
-    def get_user(idx: int):
+    def get_user_info(idx: int):
         """
         유저 정보를 가져오는 함수
-        :params name: 유저의 이름
+        :params idx: 유저 인덱스
         :return: 유저 정보
         """
         user = ColumnsFromDB.get_db_data("*", "User", "idx", idx)
         return json.dumps(user, indent=2, default=str, ensure_ascii=False)
+
+    @staticmethod
+    def insert_user_info(idx: int, select_col:str, col: str):
+        """
+        유저 정보에 삽입하는 함수
+        :params idx: 유저 인덱스
+        :params select col: 가져올 column (ex: bookRead)
+        :params col: 추가할 값 (ex: title)
+        """
+        return ColumnsFromDB.insert_db_data("User", select_col, "idx", idx, col)
+
+    @staticmethod
+    def update_user_info(idx: int, select_col:str, col: str):
+        """
+        유저 정보에 삽입하는 함수
+        :params idx: 유저 인덱스
+        :params select col: 가져올 column (ex: bookRead)
+        :params col: 삭제할 값 (ex: title)
+        """
+        return ColumnsFromDB.delete_db_data("User", select_col, "idx", idx, col)
 
 
 class UserRead:
