@@ -27,7 +27,7 @@ def index():
 # 유저 정보 전체 조회
 @app.route("/userinfo/<idx>/", methods=["POST"])
 def get_user_info_all(idx):
-    return UserInfo.get_user(idx)
+    return UserInfo.get_user_info(idx)
 
 # 유저 정보 조회
 @app.route("/<bot_type>/user/get/<reqinfo>", methods=["POST"])

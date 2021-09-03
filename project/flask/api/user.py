@@ -11,7 +11,7 @@ from api.utils.ColumnsFromDB import ColumnsFromDB
 
 class UserInfo:
     @staticmethod
-    def get_user_info(idx: int):
+    def get_user_info(idx:int):
         """
         유저 정보를 가져오는 함수
         :params idx: 유저 인덱스
@@ -21,7 +21,7 @@ class UserInfo:
         return json.dumps(user, indent=2, default=str, ensure_ascii=False)
 
     @staticmethod
-    def insert_user_info(idx: int, select_col:str, col: str):
+    def insert_user_info(idx:int, select_col:str, col:str):
         """
         유저 정보에 삽입하는 함수
         :params idx: 유저 인덱스
@@ -31,7 +31,7 @@ class UserInfo:
         return ColumnsFromDB.insert_db_data("User", select_col, "idx", idx, col)
 
     @staticmethod
-    def update_user_info(idx: int, select_col:str, col: str):
+    def update_user_info(idx:int, select_col:str, col:str):
         """
         유저 정보에 삽입하는 함수
         :params idx: 유저 인덱스
@@ -43,7 +43,7 @@ class UserInfo:
 
 class UserRead:
     @staticmethod
-    def get_read_book(idx: int):
+    def get_read_book(idx):
         """
         읽은 책 리스트를 가져오는 함수
         :params idx: 유저의 인덱스
@@ -53,7 +53,7 @@ class UserRead:
         return json.dumps(user, indent=2, default=str, ensure_ascii=False)
 
     @staticmethod
-    def insert_read_book(idx:int, title:str):
+    def insert_read_book(idx, title):
         """
         읽은 책을 추가하는 함수
         :params name: 사용자의 이름
