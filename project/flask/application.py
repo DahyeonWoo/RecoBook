@@ -12,6 +12,12 @@ from api.user import *
 
 # Flask 어플리케이션
 app = create_app()
+#app = Flask(__name__)
+
+# 첫 화면
+@app.route('/', methods=['GET'])
+def index():
+    return render_template('index.html')
 
 
 # 유저 정보 조회
