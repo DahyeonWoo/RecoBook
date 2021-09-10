@@ -4,19 +4,19 @@ sys.path.append("./project/flask/")
 sys.path.append("./project/flask/api/")
 from api.db_model.mysql import conn_mysqldb
 
-def extract_book_isbn():
+def extract_book_info():
     """
-    Extract book isbn from database
-    :return: list of book isbn
+    Extract book info from database
+    :return: list of book info
     """
     conn = conn_mysqldb()
     cursor = conn.cursor()
-    sql = "SELECT isbn13,title FROM Book;"
+    sql = "SELECT isbn13,title,author FROM Book;"
     cursor.execute(sql)
-    book_isbn = cursor.fetchall()
+    book_info = cursor.fetchall()
     cursor.close()
     conn.close()
-    return book_isbn
+    return book_info
 
 def save_to_csv(path, data, name):
     """
@@ -28,8 +28,6 @@ def save_to_csv(path, data, name):
     return df
 
 if __name__ == "__main__":
-    isbn = extract_book_isbn()
-    print(isbn)
-    print(isbn[0])
+    info = extract_book_info()
     path = './project/CrawlingData/'
-    save_to_csv(path ,isbn, "isbn")
+    save_to_csv(path ,info, "book_info")
