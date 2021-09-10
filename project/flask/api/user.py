@@ -11,81 +11,64 @@ from api.utils.ColumnsFromDB import ColumnsFromDB
 
 class UserInfo:
     @staticmethod
-    def post_user(
-        name,
-        birthday,
-        age,
-        gender,
-        bookRead,
-        bookWant,
-        interestBook,
-        interestAuthor,
-        interestCategory,
-    ):
-        """
-        유저 정보를 업데이트 하는 함수
-        """
-        db = conn_mysqldb()
-        db_cursor = db.cursor()
-        sql = """INSERT INTO User(name, birthday, age, gender, bookRead, bookWant, interestBook, interestAuthor,interestCategory) 
-            values (%s,%s,%s,%s,%s,%s,%s,%s,%s)
-            """
-        db_cursor.execute(
-            sql,
-            (
-                name,
-                birthday,
-                age,
-                gender,
-                bookRead,
-                bookWant,
-                interestBook,
-                interestAuthor,
-                interestCategory,
-            ),
-        )
-        db.commit()
-        db_cursor.close()
-
-    @staticmethod
-    def get_user(name: str):
+    def get_user_info(idx:int):
         """
         유저 정보를 가져오는 함수
-        :params name: 유저의 이름
+        :params idx: 유저 인덱스
         :return: 유저 정보
         """
-        user = ColumnsFromDB.get_db_data("*", "User", "name", name)
+        user = ColumnsFromDB.get_db_data("*", "User", "idx", idx)
         return json.dumps(user, indent=2, default=str, ensure_ascii=False)
+
+    @staticmethod
+    def insert_user_info(idx:int, select_col:str, col:str):
+        """
+        유저 정보에 삽입하는 함수
+        :params idx: 유저 인덱스
+        :params select col: 가져올 column (ex: bookRead)
+        :params col: 추가할 값 (ex: title)
+        """
+        return ColumnsFromDB.insert_db_data("User", select_col, "idx", idx, col)
+
+    @staticmethod
+    def update_user_info(idx:int, select_col:str, col:str):
+        """
+        유저 정보에 삽입하는 함수
+        :params idx: 유저 인덱스
+        :params select col: 가져올 column (ex: bookRead)
+        :params col: 삭제할 값 (ex: title)
+        """
+        return ColumnsFromDB.delete_db_data("User", select_col, "idx", idx, col)
 
 
 class UserRead:
     @staticmethod
-    def get_read_book(user_name):
+    def get_read_book(idx):
         """
         읽은 책 리스트를 가져오는 함수
-        :params user_name: 유저의 이름 
+        :params idx: 유저의 인덱스
         :return: 읽은 책 리스트
         """
-        user = ColumnsFromDB.get_db_data("bookRead", "User", "name", user_name)
+        user = ColumnsFromDB.get_db_data("bookRead", "User", "idx", idx)
         return json.dumps(user, indent=2, default=str, ensure_ascii=False)
 
     @staticmethod
-    def insert_read_book(user_name, title):
+    def insert_read_book(idx, title):
         """
         읽은 책을 추가하는 함수
         :params name: 사용자의 이름
         :params title: 추가할 책 이름
         """
-        ColumnsFromDB.insert_db_data("User", "bookRead", "name", user_name, title)
+        ColumnsFromDB.insert_db_data("User", "bookRead", "name", idx, title)
 
     @staticmethod
-    def delete_read_book(user_name, title):
+    def delete_read_book(user_idx, title):
         """
         읽은 책 삭제하는 함수
-        :params name: 사용자의 이름
+        :params idx: 사용자의 인덱스
         :params book: 삭제할 책 이름
         """
-        ColumnsFromDB.delete_db_data("User", "bookRead", "name", user_name, title)
+        ColumnsFromDB.delete_db_data("User", "bookRead", "idx", user_idx, title)
 
 
 class UserWish:
@@ -93,7 +76,7 @@ class UserWish:
     def get_book_want(user_name):
         """
         위시 리스트를 가져오는 함수
-        :params user_name: 유저의 이름 
+        :params user_name: 유저의 이름
         :return: 위시 리스트
         """
         book_want = ColumnsFromDB.get_db_data("bookWant", "User", "name", user_name)
