@@ -44,7 +44,6 @@ def recommend_by_author(author):
 
 #제목 기반 추천
 def recommend_by_title(title):
-    print(title)
     db = conn_mysqldb()
     db_cursor = db.cursor()
     sql = "SELECT title, vector FROM ReviewTest;"
