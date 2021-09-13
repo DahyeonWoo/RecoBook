@@ -9,6 +9,19 @@ from flask import url_for, redirect
 
 class ColumnsFromDB:
     @staticmethod
+    def remove_values_from_list(the_list, val):
+        """
+        특정 값을 리스트에서 제거하는 함수
+
+        :param the_list: 리스트
+        :param val: 제거할 값
+        :return: 제거된 리스트
+        """
+
+        return [value for value in the_list if value != val]
+
+
+    @staticmethod
     def get_col_name(table_name):
         """
         해당 테이블의 컬럼명을 반환하는 함수
@@ -50,7 +63,7 @@ class ColumnsFromDB:
         db_cursor.close()
         total_db_col = ColumnsFromDB.get_col_name(table_name)
         col_list = db_col.split(",")
-        print(col_list)
+        print('테이블 column 리스트:', col_list)
         dict = create_dict()
         if db_col == "*":
             for i in range(len(total_db_col)):
@@ -74,18 +87,18 @@ class ColumnsFromDB:
         :params value: 삽입할 값
         """
         data = ColumnsFromDB.get_db_data(select_col, table_name, col, param)
-        print("db 데이터:", data)
+        print("db에 저장된 데이터: ", data)
         mysql_db = conn_mysqldb()
         db_cursor = mysql_db.cursor()
-        print(f"value:{value}")
+        print(f"삽입할 값: {value}")
         try:
             data = list(data.values())[0].replace(" ", "")
             data = data.split(";")  # 해당 사용자의 데이터들을 리스트로 변환
             data = list(set(data))
-            print("변환 후 db 데이터:", data)
             if value.replace(" ", "") not in data:  # 데이터가 이미 리스트에 있는지 확인
                 data.append(value)  # 리스트에 없는 경우 데이터 추가
-                sep_data = ";".join(data)  # 리스트를 ;구분 문자열로 변환
+                remove_blank = ColumnsFromDB.remove_values_from_list(data, "") # 리스트에 있는는 공백 원소 제거
+                sep_data = ";".join(remove_blank)  # 리스트를 ;구분 문자열로 변환
                 print(sep_data)
                 sql = f"UPDATE {table_name} SET {select_col} = '{sep_data}' WHERE {col} LIKE REPLACE('%{param}%', ' ', '')"  # 해당 사용자의 데이터 리스트를 업데이트할 쿼리문
                 db_cursor.execute(sql)  # 해당 사용자의 데이터 리스트를 업데이트
@@ -145,6 +158,6 @@ if __name__ == "__main__":
     # res = ColumnsFromDB.get_col_name('Book')
     # res = ColumnsFromDB.get_db_data('isbn13, title', 'Book', 'title', '미스테리아')
     # res = ColumnsFromDB.get_db_data('bookRead', 'User', 'name', '이현준')
-    # res = ColumnsFromDB.insert_db_data("User", "bookRead", "name", "이현준", "30분 경영학")
-    # res = ColumnsFromDB.delete_db_data("User", "bookRead", "name", "이현준", "밝은밤")
+    res = ColumnsFromDB.insert_db_data("User", "interestAuthor", "name", "이지후", "김영하")
+    # res = ColumnsFromDB.delete_db_data("User", "interestAuthor", "name", "이지후", "김영하")
     print(res)
