@@ -57,7 +57,7 @@ class ColumnsFromDB:
         """
         mysql_db = conn_mysqldb()
         db_cursor = mysql_db.cursor()
-        sql = f"SELECT {db_col} FROM {table_name} WHERE {col} = {param}"
+        sql = f"SELECT {db_col} FROM {table_name} WHERE {col} = '{param}'"
         db_cursor.execute(sql)
         db_data = db_cursor.fetchone()
         db_cursor.close()
@@ -162,7 +162,7 @@ if __name__ == "__main__":
     # res = ColumnsFromDB.get_col_name('Book')
     # res = ColumnsFromDB.get_db_data('isbn13, title', 'Book', 'title', '미스테리아')
     # res = ColumnsFromDB.get_db_data('bookRead', 'User', 'name', '이현준')
-
-    res = ColumnsFromDB.insert_db_data("User", "interestAuthor", "name", "이지후", "김영하")
+    res = ColumnsFromDB.get_db_data('interestAuthor', 'User', 'name', '이현준')
+    # res = ColumnsFromDB.insert_db_data("User", "interestAuthor", "name", "이지후", "김영하")
     # res = ColumnsFromDB.delete_db_data("User", "interestAuthor", "name", "이지후", "김영하")
     print(res)
