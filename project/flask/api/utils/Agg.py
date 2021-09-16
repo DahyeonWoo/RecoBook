@@ -1,4 +1,5 @@
 import sys
+import json
 from collections import Counter
 
 sys.path.append("./project/flask/")
@@ -27,7 +28,12 @@ def get_topn(select_col, table_name, n):
     :param select_col: 선택할 컬럼
     :param table_name: 테이블 명
     :param n: top n
-    :return: top n 리스트
+    :return: top n 개의 값이 담긴 리스트
+    ex) {
+            1: {'name': '아몬드', 'count': 10},
+            2: {'name': '오렌지', 'count': 6},
+            3: {'name': '바나나', 'count': 4}
+        }
     """
     mysql_db = conn_mysqldb()
     db_cursor = mysql_db.cursor()
@@ -41,9 +47,11 @@ def get_topn(select_col, table_name, n):
     count = Counter(remove_blank)
     top_n = count.most_common(n)
     d = create_dict()
-    for feature, n in top_n:
-        d.add(feature, n)
-    return dict(sorted(d.items(), key=lambda item: item[1], reverse=True))
+    for i in range(1, len(top_n)+1):
+        dict_value = {'name': top_n[i-1][0], 'count': top_n[i-1][1]}
+        d.add(i, dict_value)
+    return json.dumps(d, indent=2, ensure_ascii=False)
+
     
 
 

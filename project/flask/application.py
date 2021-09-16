@@ -234,24 +234,29 @@ def get_book_info_top(bot_type,reqinfo):
     try:
         if bot_type == "kakao":
             if reqinfo == "bookRead":
-                result = Top.get_topn_bookRead(top_n)
-                # answer = "현재까지 사람들이 많이 읽은 책 목록이야.\n" + result
+                data = Top.get_topn_bookRead(top_n)
+                result = Top.accessing_dict_info(data)
+                answer = "현재까지 사람들이 많이 읽은 책 목록이야.\n" + result
             elif reqinfo == "bookWant":
-                result = Top.get_topn_bookWant(top_n)
-                # answer = "현재 인기 있는 위시리스트 도서 목록이야.\n" + result
+                data = Top.get_topn_bookWant(top_n)
+                result = Top.accessing_dict_info(data)
+                answer = "현재 인기 있는 위시리스트 도서 목록이야.\n" + result
             elif reqinfo == "interestBook":
-                result = Top.get_topn_interestBook(top_n)
-                # answer = "현재 인기 있는 관심 도서 목록이야.\n" + result
+                data = Top.get_topn_interestBook(top_n)
+                result = Top.accessing_dict_info(data)
+                answer = "현재 인기 있는 관심 도서 목록이야.\n" + result
             elif reqinfo == "interestAuthor":
-                result =Top.get_topn_interestAuthor(top_n)
-                # answer = "현재 인기 있는 관심 작가 목록이야.\n" + result
+                data =Top.get_topn_interestAuthor(top_n)
+                result = Top.accessing_dict_info(data)
+                answer = "현재 인기 있는 관심 작가 목록이야.\n" + result
             elif reqinfo == "interestCategory":
-                result =Top.get_topn_interestCategory(top_n)
-                # answer = "현재 인기 있는 관심 장르 목록이야.\n" + result
+                data =Top.get_topn_interestCategory(top_n)
+                result = Top.accessing_dict_info(data)
+                answer = "현재 인기 있는 관심 장르 목록이야.\n" + result
             else:
                 answer = "레꼬북에 없는 기능이야. 계속 개발중이니까, 더 많은 기능을 기대해줘!"
-            return result
-            # return KakaoText().send_response({"Answer": answer})
+            # return result
+            return KakaoText().send_response({"Answer": answer})
         elif bot_type == "naver":
             return json.dumps({}), 200
         else:
