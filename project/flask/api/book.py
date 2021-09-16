@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import sys
 import json
-
+sys.path.append("./project/flask/")
 sys.path.append("./project/flask/api")
 from api.db_model.mysql import conn_mysqldb
 from api.utils.ColumnsFromDB import ColumnsFromDB
@@ -53,7 +53,7 @@ class BookInfo:
         WHERE title 
         LIKE %s
         """
-        #cursor.execute(sql, f"%{title}%")
+        cursor.execute(sql, f"%{title}%")
         book_info = cursor.fetchone()
         if not book_info:
             return None
@@ -65,6 +65,7 @@ if __name__ == "__main__":
     # res = get_title_to_info('금각사')
     # res = get_title_to_info2('금각 사')
     # res = get_author_to_info('이미예')
-    res = get_isbn_to_info("9791165341909")
+    # res = BookInfo.get_isbn_to_info("9791165341909")
+    res = BookInfo.get_title_to_review('달러구트 꿈 백화점')
     print(res)
     print(len(res))

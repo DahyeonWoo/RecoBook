@@ -21,24 +21,24 @@ class UserInfo:
         return json.dumps(user, indent=2, default=str, ensure_ascii=False)
 
     @staticmethod
-    def insert_user_info(idx:int, select_col:str, col:str):
+    def insert_user_info(idx:int, select_col:str, value:str):
         """
         유저 정보에 삽입하는 함수
         :params idx: 유저 인덱스
         :params select col: 가져올 column (ex: bookRead)
-        :params col: 추가할 값 (ex: title)
+        :params value: 추가할 값 (ex: title)
         """
-        return ColumnsFromDB.insert_db_data("User", select_col, "idx", idx, col)
+        return ColumnsFromDB.insert_db_data("User", select_col, "idx", idx, value)
 
     @staticmethod
-    def update_user_info(idx:int, select_col:str, col:str):
+    def update_user_info(idx:int, select_col:str, value:str):
         """
         유저 정보에 삽입하는 함수
         :params idx: 유저 인덱스
         :params select col: 가져올 column (ex: bookRead)
-        :params col: 삭제할 값 (ex: title)
+        :params value: 삭제할 값 (ex: title)
         """
-        return ColumnsFromDB.delete_db_data("User", select_col, "idx", idx, col)
+        return ColumnsFromDB.delete_db_data("User", select_col, "idx", idx, value)
 
 
 class UserRead:

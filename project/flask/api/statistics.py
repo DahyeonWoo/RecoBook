@@ -1,8 +1,6 @@
 import sys
-
 sys.path.append("./project/flask/")
 sys.path.append("./project/flask/api/")
-from api.utils.ColumnsFromDB import ColumnsFromDB
 from api.utils.Agg import get_topn
 
 """
@@ -28,7 +26,7 @@ class Top:
 
 if __name__ == "__main__":
     n=3
-    print(get_topn_bookRead(n))
-    print(get_topn_bookWant(n))
-    print(get_topn_interestAuthor(n))
-    print(get_topn_interestCategory(n))
+    print(Top.get_topn_bookRead(n))
+    print(Top.get_topn_bookWant(n))
+    print(Top.get_topn_interestAuthor(n))
+    print(Top.get_topn_interestCategory(n))
