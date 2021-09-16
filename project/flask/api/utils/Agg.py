@@ -10,6 +10,7 @@ from api.utils.CreateDict import create_dict
 def remove_values_from_list(the_list, val):
     """
     특정 값을 리스트에서 제거하는 함수
+    ';' 기준 split을 할 경우 리스트 맨 앞에 '' 원소가 잡히는 경우가 있어 이를 제거할 때 주로 사용
 
     :param the_list: 리스트
     :param val: 제거할 값
