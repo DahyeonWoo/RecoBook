@@ -21,24 +21,24 @@ class UserInfo:
         return json.dumps(user, indent=2, default=str, ensure_ascii=False)
 
     @staticmethod
-    def insert_user_info(idx:int, select_col:str, col:str):
+    def insert_user_info(idx:int, select_col:str, value:str):
         """
         유저 정보에 삽입하는 함수
         :params idx: 유저 인덱스
         :params select col: 가져올 column (ex: bookRead)
-        :params col: 추가할 값 (ex: title)
+        :params value: 추가할 값 (ex: title)
         """
-        return ColumnsFromDB.insert_db_data("User", select_col, "idx", idx, col)
+        return ColumnsFromDB.insert_db_data("User", select_col, "idx", idx, value)
 
     @staticmethod
-    def update_user_info(idx:int, select_col:str, col:str):
+    def update_user_info(idx:int, select_col:str, value:str):
         """
         유저 정보에 삽입하는 함수
         :params idx: 유저 인덱스
         :params select col: 가져올 column (ex: bookRead)
-        :params col: 삭제할 값 (ex: title)
+        :params value: 삭제할 값 (ex: title)
         """
-        return ColumnsFromDB.delete_db_data("User", select_col, "idx", idx, col)
+        return ColumnsFromDB.delete_db_data("User", select_col, "idx", idx, value)
 
 
 class UserRead:
@@ -175,7 +175,7 @@ class UserGenre:
 
 if __name__ == "__main__":
     # post_user('이독자','2000-07-07',22, 'M','밤의 여행자들','밝은 밤','이웃집 밤','이지은','소설')
-    # res = UserRead.get_read_book('이현준') # 읽은 책 가져오기
+    res = UserRead.get_read_book('이현준') # 읽은 책 가져오기
     # print(list(res.values())[0])
     # res = UserRead.insert_read_book("이현준", "아몬드")  # 읽은 책 추가
     # res = UserRead.delete_read_book('김민준', '아몬드') # 읽은 책 삭제
@@ -184,7 +184,7 @@ if __name__ == "__main__":
     # res = UserWish.get_book_want('김민준')
     # res = UserAuthor.insert_interest_author('김민준', '김영하')
     # res = UserAuthor.delete_interest_author('김민준', '김영하')
-    res = UserAuthor.get_interest_author('이현준')
+    # res = UserAuthor.get_interest_author('이현준')
     # res = UserGenre.insert_interest_genre('박지훈', '로맨스')
     # res = UserGenre.delete_interest_genre('박지훈', '로맨스')
     # res = UserGenre.get_interest_genre("박지훈")

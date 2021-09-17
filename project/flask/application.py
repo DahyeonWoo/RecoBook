@@ -83,7 +83,7 @@ def get_user_info(bot_type,reqinfo):
         abort(500)
         print(Exception)
 
-# 유저 정보 수정
+# 유저 정보 추가
 @app.route("/<bot_type>/user/insert/<reqinfo>", methods=["POST"])
 def insert_user_info(bot_type,reqinfo):
     body = request.get_json()
@@ -196,19 +196,24 @@ def update_user_info(bot_type,reqinfo):
 # 책 정보 조회
 @app.route("/<bot_type>/book/get/<reqinfo>", methods=["POST"])
 def get_book_info(bot_type,reqinfo):
+    body = request.get_json()
     try:
         if bot_type == "kakao":
             if reqinfo == "title-info":
-                result = BookInfo.get_title_to_info(title)
+                title_info = body["action"]["detailParams"]["title"]["value"]
+                result = BookInfo.get_title_to_info(title_info)
                 answer = "책 제목으로 검색했을 때의 결과야.\n" + result
             elif reqinfo == "isbn13-info":
-                result = BookInfo.get_isbn_to_info(isbn13)
+                isbn_info = body["action"]["detailParams"]["isbn13"]["value"]
+                result = BookInfo.get_isbn_to_info(isbn_info)
                 answer = "책 isbn13으로 검색했을 때의 결과야.\n" + result
             elif reqinfo == "author-info":
-                result = BookInfo.get_author_to_info(name)
+                author_info = body["action"]["detailParams"]["author"]["value"]
+                result = BookInfo.get_author_to_info(author_info)
                 answer = "작가 정보로 검색했을 때의 결과야.\n" + result
             elif reqinfo == "title-review":
-                result = BookInfo.get_title_to_review(title)
+                title_review_info = body["action"]["detailParams"]["title"]["value"]
+                result = BookInfo.get_title_to_review(title_review_info)
                 answer = "제목으로 검색했을 때의 결과야.\n" + result
             else:
                 answer = "레꼬북에 없는 기능이야. 계속 개발중이니까, 더 많은 기능을 기대해줘!"
@@ -225,27 +230,33 @@ def get_book_info(bot_type,reqinfo):
 @app.route("/<bot_type>/book/get/top/<reqinfo>", methods=["POST"])
 def get_book_info_top(bot_type,reqinfo):
     body = request.get_json()
+    top_n = 5
     try:
         if bot_type == "kakao":
             if reqinfo == "bookRead":
-                result = Top.get_topn_bookRead(10)
-                # answer = "현재까지 사람들이 많이 읽은 책 목록이야.\n" + result
+                data = Top.get_topn_bookRead(top_n)
+                result = Top.accessing_dict_info(data)
+                answer = "현재까지 사람들이 많이 읽은 책 목록이야.\n" + result
             elif reqinfo == "bookWant":
-                result = Top.get_topn_bookWant(10)
-                # answer = "현재 인기 있는 위시리스트 도서 목록이야.\n" + result
+                data = Top.get_topn_bookWant(top_n)
+                result = Top.accessing_dict_info(data)
+                answer = "현재 인기 있는 위시리스트 도서 목록이야.\n" + result
             elif reqinfo == "interestBook":
-                result = Top.get_topn_interestBook(10)
-                # answer = "현재 인기 있는 관심 도서 목록이야.\n" + result
+                data = Top.get_topn_interestBook(top_n)
+                result = Top.accessing_dict_info(data)
+                answer = "현재 인기 있는 관심 도서 목록이야.\n" + result
             elif reqinfo == "interestAuthor":
-                result =Top.get_topn_interestAuthor(10)
-                # answer = "현재 인기 있는 관심 작가 목록이야.\n" + result
+                data =Top.get_topn_interestAuthor(top_n)
+                result = Top.accessing_dict_info(data)
+                answer = "현재 인기 있는 관심 작가 목록이야.\n" + result
             elif reqinfo == "interestCategory":
-                result =Top.get_topn_interestCategory(10)
-                # answer = "현재 인기 있는 관심 장르 목록이야.\n" + result
+                data =Top.get_topn_interestCategory(top_n)
+                result = Top.accessing_dict_info(data)
+                answer = "현재 인기 있는 관심 장르 목록이야.\n" + result
             else:
                 answer = "레꼬북에 없는 기능이야. 계속 개발중이니까, 더 많은 기능을 기대해줘!"
-            return result
-            # return KakaoText().send_response({"Answer": answer})
+            # return result
+            return KakaoText().send_response({"Answer": answer})
         elif bot_type == "naver":
             return json.dumps({}), 200
         else:
