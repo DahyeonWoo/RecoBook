@@ -29,7 +29,7 @@ class Entity:
         #df생성
         data = {'엔티티 이름':'book', '대표어':titleList, '유사어':'', '민감 정보 보안설정':'일반 정보'}
         df = pd.DataFrame(data)
-        df = df.drop_duplicates()
+        df = df.drop_duplicates(['대표어'])
         print(df.shape)
         
         #print(df.head())
