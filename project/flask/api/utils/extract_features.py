@@ -6,7 +6,7 @@ from api.db_model.mysql import conn_mysqldb
 
 def extract_book_info():
     """
-    Extract book info from database
+    Extract book data info from database
     :return: list of book info
     """
     conn = conn_mysqldb()
