@@ -52,7 +52,7 @@ class Review:
         btnClick = ActionChains(driver).move_to_element(eachReview).click()
         btnClick.perform()
         print('successfully clicked btn')
-        time.sleep(3)
+        time.sleep(2)
 
         #내용가져오고
         reviewTxt = reviewBlock.find_element_by_css_selector(f'div:nth-child({childNum}) > div.reviewInfoBot.origin > div.review_cont')
@@ -93,7 +93,7 @@ class Review:
         
         bList = Review.get_bookISBN()
 
-        chromedriver = '/Users/zogak/chromedriver'
+        chromedriver = '/Users/zogak/Downloads/chromedriver'
         driver = webdriver.Chrome(chromedriver)
 
         driver.get('http://www.yes24.com/main/default.aspx')
@@ -103,7 +103,7 @@ class Review:
         #values = list()
         star = 0
 
-        for i in range(550,601):
+        for i in range(2300,2401):
             isbn13 = bList[i]
             print(isbn13)
             #검색창
@@ -122,38 +122,30 @@ class Review:
                 if firstBook:
                     print('book found')
                     
-                    #check how many reviews
-                    reviewCnt = firstBook.text[:-1]
-                    reviewCnt = int(reviewCnt)
-                    print('review : ', reviewCnt)
                     
-                    if reviewCnt < 20:
-                        print('less than 20')
-                        #driver.back()
-                        continue
+                    starBlock = driver.find_element_by_css_selector('#schMid_wrap > div:nth-child(4) > div.goodsList.goodsList_list > table > tbody > tr:nth-child(1) > td.goods_infogrp > div.goods_rating > span.gd_rating > em')
+                    star = starBlock.text
+                    print(star)
                     
-                    else:
-                        starBlock = driver.find_element_by_css_selector('#schMid_wrap > div:nth-child(4) > div.goodsList.goodsList_list > table > tbody > tr:nth-child(1) > td.goods_infogrp > div.goods_rating > span.gd_rating > em')
-                        star = starBlock.text
-                        print(star)
-                        
-                        firstBookClick = driver.find_element_by_css_selector('#schMid_wrap > div:nth-child(4) > div.goodsList.goodsList_list > table > tbody > tr:nth-child(1) > td.goods_infogrp > div.goods_rating > span.gd_reviewCount > a')
-                        firstBookClick.send_keys(Keys.ENTER)
-                        time.sleep(2)
-                        
-                        reviewCorpus = Review.crawlReview(driver)
-                        print("finished {}".format(isbn13))
-                        #values.append([isbn13, star, reviewCorpus])
-                        
-                        sqlSentence = "INSERT INTO Review (isbn13, rating, review) values (%s,%s,%s)"
-                        cur.execute(sqlSentence, (isbn13, star, reviewCorpus))
-                        db.commit()
-                        driver.back()
+                    firstBookClick = driver.find_element_by_css_selector('#schMid_wrap > div:nth-child(4) > div.goodsList.goodsList_list > table > tbody > tr:nth-child(1) > td.goods_infogrp > div.goods_rating > span.gd_reviewCount > a')
+                    firstBookClick.send_keys(Keys.ENTER)
+                    time.sleep(2)
                     
+                    reviewCorpus = Review.oneReview(driver)
+                    print("finished {}".format(isbn13))
+                    #values.append([isbn13, star, reviewCorpus])
+                    
+                    
+                    sqlSentence = "INSERT INTO Review (isbn13, rating, review) values (%s,%s,%s)"
+                    cur.execute(sqlSentence, (isbn13, star, reviewCorpus))
+                    db.commit()
+                    #driver.back()
+                    
+
             except Exception as e:
+                print('현재 i :', i)
                 print(e)
         
-
     @staticmethod
     def get_reviews():
         mysql_db = mysql.conn_mysqldb()
