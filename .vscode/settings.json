@@ -1,4 +1,5 @@
 {
     "python.pythonPath": "C:\\21_hf216\\bookcode\\Scripts\\python.exe",
-    "jupyter.jupyterServerType": "local"
+    "jupyter.jupyterServerType": "local",
+    "python.terminal.activateEnvInCurrentTerminal": true,
 }
