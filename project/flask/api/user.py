@@ -20,6 +20,22 @@ class UserInfo:
         user = ColumnsFromDB.get_db_data("*", "User", "idx", idx)
         return json.dumps(user, indent=2, default=str, ensure_ascii=False)
 
+    def get_is_user(idx:int):
+        """
+        유저 정보를 가져오는 함수
+        :params idx: 유저 인덱스
+        :return: 유저 정보
+        """
+        return ColumnsFromDB.get_db_data_only("idx", "User", "idx", idx)
+
+    @staticmethod
+    def insert_user_idx(idx: int):
+        """
+        유저 idx를 등록하는 함수
+        :params idx: 유저 인덱스
+        """
+        return ColumnsFromDB.insert_user_idx(idx)
+
     @staticmethod
     def insert_user_info(idx:int, select_col:str, value:str):
         """
