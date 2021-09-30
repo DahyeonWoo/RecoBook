@@ -19,7 +19,6 @@ def insert_df_into_DB():
         df.at[i, 'top_isbn'] = str(row['top_isbn'])
         df.at[i, 'cosine_similarity'] = str(row['cosine_similarity'])
     df.to_sql(name='Score', con=db, index=False, if_exists='replace')
-
-
+    
 if __name__ == '__main__':
     insert_df_into_DB()
