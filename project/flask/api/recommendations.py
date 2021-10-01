@@ -1,3 +1,5 @@
+import sys
+sys.path.append("./project/flask/")
 from api.db_model.mysql import conn_mysqldb
 import pandas as pd
 import numpy as np
@@ -43,7 +45,7 @@ def recommend_by_author(author):
 
 
 #제목 기반 추천
-def recommend_by_title(title):
+def recommend_by_title_using_reviews(title):
     db = conn_mysqldb()
     db_cursor = db.cursor()
     sql = "SELECT title, vector FROM ReviewTest;"
@@ -80,9 +82,38 @@ def recommend_by_title(title):
 
     return titles
 
+def recommend_by_title_using_description(title):
+    """
+    리스트 뷰가 아직 미완성됐으므로 일단 추천할 책의 제목만 반환함
+    리스트 뷰가 완성되면 형식에 맞게 변환해야함.
+    """
+    db = conn_mysqldb()
+    db_cursor = db.cursor()
+    # test 용 title description 프린팅
+    sql = f"SELECT title, description FROM total_view WHERE title LIKE '%{title}%'"
+    db_cursor.execute(sql)
+    result = db_cursor.fetchall()[0]
+    print(result)
+    # title에 해당하는 top_isbn 추출
+    sql = f"SELECT top_isbn FROM total_view WHERE title LIKE '%{title}%'"
+    db_cursor.execute(sql)
+    top_isbn = db_cursor.fetchone()[0]
+    # 문자형 리스트를 문자형 튜플로 변환
+    top_isbn = str(tuple(eval(top_isbn)))
+    # isbn에 해당하는 제목, 작가 추출
+    sql = f"SELECT title FROM total_view WHERE isbn13 in {top_isbn}"
+    db_cursor.execute(sql)
+    result = db_cursor.fetchall()
+    print(result)
+    return result
+
 def str_to_vector(str_vector):    
     str_vector=str_vector.replace('[','').replace(']','').split()
     list_vector = list(map(float, str_vector))
     vector=np.array(list_vector)    
     return vector
 
+if __name__ == '__main__':
+    title = '7년의 밤'
+    print(recommend_by_title_using_reviews(title))
+    recommend_by_title_using_description(title)
