@@ -8,7 +8,7 @@ from api import create_app
 
 from api.user import *
 from api.book import *
-from api.recommendations import recommend_by_title, recommend_by_author
+from api.recommendations import recommend_by_title_using_reviews, recommend_by_author
 from api.statistics import *
 
 from api.KakaoEvent import KakaoEvent
@@ -384,12 +384,19 @@ def get_book_info_top(bot_type,reqinfo):
 
 # 벡터 평균값 추천, 비슷한 도서/작가
 @app.route("/<bot_type>/recommend/<reqinfo>/similar", methods=['POST'])
-def recommend_similar(bot_type,reqinfo):
+def recommend_similar_review(bot_type,reqinfo):
     body = request.get_json()
     # try:
     if reqinfo == "title":
         if bot_type == "kakao":
-            title = body["action"]["detailParams"]["title"]["value"]
+            if reqinfo == "title":
+                title = body["action"]["detailParams"]["title"]["value"]
+                answer = recommend_by_title_using_reviews(title)
+                return KakaoText().send_response({"Answer": "너에게 딱 맞는 추천 목록이야\n" + answer})
+            elif reqinfo == "author":
+                author = body["action"]["detailParams"]["author"]["value"]
+                answer = recommend_by_author(author)
+                return KakaoText().send_response({"Answer": "너에게 딱 맞는 추천 목록이야\n" + answer})
         elif bot_type == "naver":
             title = body["userInfo"]["entities"]["29ce5a43db2849249a9d3c8e94dcd766"] # entity 등록 후 코드 수정하기
         answer = recommend_by_title(title)

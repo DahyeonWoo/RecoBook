@@ -61,7 +61,7 @@ class ColumnsFromDB:
         db_cursor.close()
         total_db_col = ColumnsFromDB.get_col_name(table_name)
         col_list = db_col.split(",")
-        print('테이블 column 리스트:', col_list)
+        #print('테이블 column 리스트:', col_list)
         dict = create_dict()
         if db_col == "*":
             for i in range(len(total_db_col)):
