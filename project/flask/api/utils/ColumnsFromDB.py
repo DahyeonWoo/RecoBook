@@ -75,6 +75,44 @@ class ColumnsFromDB:
         return dict
 
     @staticmethod
+    def get_db_data_only(db_col, table_name, col, param):
+        """
+        지정한 컬럼에 관한 정보를 불러오는 함수
+        :params db_col: 조회할 컬럼명
+        :params table_name: 테이블명
+        :params col: 조건 컬럼명
+        :params param: 조건문에 들어갈 이름
+
+        :return: 리스트
+        """
+        mysql_db = conn_mysqldb()
+        db_cursor = mysql_db.cursor()
+        sql = f"SELECT {db_col} FROM {table_name} WHERE {col} = '{param}'"
+        db_cursor.execute(sql)
+        db_data = db_cursor.fetchone()
+        db_cursor.close()
+        return db_data
+
+    @staticmethod
+    def insert_user_idx(idx):
+        """
+        데이터를 db에 삽입하는 함수
+        :params table_name: 테이블명
+        :params select_col: SELECT 절에 입력할 컬럼
+        :params col: WHERE 절에 입력할 컬럼
+        :params param: col 대응되는 이름
+        :params value: 삽입할 값
+        """
+        #data = ColumnsFromDB.get_db_data("idx", "User", "idx", idx)
+        #print("db에 저장된 데이터: ", data)
+        mysql_db = conn_mysqldb()
+        db_cursor = mysql_db.cursor()
+        sql = f"INSERT INTO User(idx) VALUES(idx)"
+        db_cursor.execute(sql)  # 해당 사용자의 데이터 리스트를 업데이트
+        mysql_db.commit()  # 트랜잭션 저장
+        db_cursor.close()
+
+    @staticmethod
     def insert_db_data(table_name, select_col, col, param, value):
         """
         데이터를 db에 삽입하는 함수
@@ -160,7 +198,8 @@ if __name__ == "__main__":
     # res = ColumnsFromDB.get_col_name('Book')
     # res = ColumnsFromDB.get_db_data('isbn13, title', 'Book', 'title', '미스테리아')
     # res = ColumnsFromDB.get_db_data('bookRead', 'User', 'name', '이현준')
-    res = ColumnsFromDB.get_db_data('interestAuthor', 'User', 'name', '이현준')
+    # res = ColumnsFromDB.get_db_data('interestAuthor', 'User', 'name', '이현준')
     # res = ColumnsFromDB.insert_db_data("User", "interestAuthor", "name", "이지후", "김영하")
     # res = ColumnsFromDB.delete_db_data("User", "interestAuthor", "name", "이지후", "김영하")
+    res = ColumnsFromDB.insert_user(1)
     print(res)
