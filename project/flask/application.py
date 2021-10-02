@@ -18,6 +18,16 @@ from api.KakaoText import KakaoText
 app = create_app()
 #app = Flask(__name__)
 
+
+# naver entity 전역변수 설정
+
+naver_example_entity = "29ce5a43db2849249a9d3c8e94dcd766"
+naver_title_entity = "f76d07044c714ebabcc710620a8e05a3"
+naver_author_entity = "330cbe05bc954ee68b82022b73fd4a68"
+naver_genre_entity = "fb93fe2f70964641ae5a5e11fa74324c"
+
+
+
 # 첫 화면
 @app.route('/', methods=['GET'])
 def index():
@@ -124,7 +134,7 @@ def insert_user_info(bot_type,reqinfo):
                 if bot_type == "kakao":
                     title = body["action"]["detailParams"]["title"]["value"]
                 elif bot_type == "naver":
-                    title = body["userInfo"]["entities"]["29ce5a43db2849249a9d3c8e94dcd766"] # entity 등록 후 코드 수정하기
+                    title = body["userInfo"]["entities"][naver_title_entity]
                 result = UserInfo.insert_user_info(idx, reqinfo, title)
                 print(result)
                 if result == 1:
@@ -135,7 +145,7 @@ def insert_user_info(bot_type,reqinfo):
                 if bot_type == "kakao":
                     title = body["action"]["detailParams"]["title"]["value"]
                 elif bot_type == "naver":
-                    title = body["userInfo"]["entities"]["29ce5a43db2849249a9d3c8e94dcd766"] # entity 등록 후 코드 수정하기
+                    title = body["userInfo"]["entities"][naver_title_entity]
                 result = UserInfo.insert_user_info(idx, reqinfo, title)
                 if result == 1:
                     answer = "위시리스트에 <"+title+">가 등록됐어"
@@ -145,7 +155,7 @@ def insert_user_info(bot_type,reqinfo):
                 if bot_type == "kakao":
                     title = body["action"]["detailParams"]["title"]["value"]
                 elif bot_type == "naver":
-                    title = body["userInfo"]["entities"]["29ce5a43db2849249a9d3c8e94dcd766"] # entity 등록 후 코드 수정하기
+                    title = body["userInfo"]["entities"][naver_title_entity]
                 result = UserInfo.insert_user_info(idx, reqinfo, title)
                 if result == 1:
                     answer = "관심 도서에 <"+title+">가 등록됐어"
@@ -155,7 +165,7 @@ def insert_user_info(bot_type,reqinfo):
                 if bot_type == "kakao":
                     author = body["action"]["detailParams"]["author"]["value"]
                 elif bot_type == "naver":
-                    author = body["userInfo"]["entities"]["29ce5a43db2849249a9d3c8e94dcd766"] # entity 등록 후 코드 수정하기
+                    author = body["userInfo"]["entities"][naver_author_entity]
                 result = UserInfo.insert_user_info(idx, reqinfo, author)
                 if result == 1:
                     answer = "관심 작가에 <"+author+">가 등록됐어"
@@ -165,7 +175,7 @@ def insert_user_info(bot_type,reqinfo):
                 if bot_type == "kakao":
                     genre = body["action"]["detailParams"]["genre"]["value"]
                 elif bot_type == "naver":
-                    genre = body["userInfo"]["entities"]["29ce5a43db2849249a9d3c8e94dcd766"] # entity 등록 후 코드 수정하기
+                    genre = body["userInfo"]["entities"][naver_genre_entity]
                 result = UserInfo.insert_user_info(idx, reqinfo, genre)
                 if result == 1:
                     answer = "관심 장르에 <"+genre+">가 등록됐어"
@@ -216,7 +226,7 @@ def update_user_info(bot_type,reqinfo):
                 if bot_type == "kakao":
                     title = body["action"]["detailParams"]["title"]["value"]
                 elif bot_type == "naver":
-                    title = body["userInfo"]["entities"]["29ce5a43db2849249a9d3c8e94dcd766"] # entity 등록 후 코드 수정하기
+                    title = body["userInfo"]["entities"][naver_title_entity]
                 result = UserInfo.update_user_info(idx, reqinfo, title)
                 if result == 1:
                     answer = "읽은 책 목록에서 <"+title+">를 삭제했어"
@@ -226,7 +236,7 @@ def update_user_info(bot_type,reqinfo):
                 if bot_type == "kakao":
                     title = body["action"]["detailParams"]["title"]["value"]
                 elif bot_type == "naver":
-                    title = body["userInfo"]["entities"]["29ce5a43db2849249a9d3c8e94dcd766"] # entity 등록 후 코드 수정하기
+                    title = body["userInfo"]["entities"][naver_title_entity]
                 result = UserInfo.update_user_info(idx, reqinfo, title)
                 if result == 1:
                     answer = "위시리스트에서 <"+title+">를 삭제했어"
@@ -236,7 +246,7 @@ def update_user_info(bot_type,reqinfo):
                 if bot_type == "kakao":
                     title = body["action"]["detailParams"]["title"]["value"]
                 elif bot_type == "naver":
-                    title = body["userInfo"]["entities"]["29ce5a43db2849249a9d3c8e94dcd766"] # entity 등록 후 코드 수정하기
+                    title = body["userInfo"]["entities"][naver_title_entity]
                 result = UserInfo.update_user_info(idx, reqinfo, title)
                 if result == 1:
                     answer = "관심 책 목록에서 <"+title+">를 삭제했어"
@@ -246,7 +256,7 @@ def update_user_info(bot_type,reqinfo):
                 if bot_type == "kakao":
                     author = body["action"]["detailParams"]["author"]["value"]
                 elif bot_type == "naver":
-                    author = body["userInfo"]["entities"]["29ce5a43db2849249a9d3c8e94dcd766"] # entity 등록 후 코드 수정하기
+                    author = body["userInfo"]["entities"][naver_author_entity]
                 result = UserInfo.update_user_info(idx, reqinfo, author)
                 if result == 1:
                     answer = "관심 작가 목록에서 <"+author+">를 삭제했어"
@@ -256,7 +266,7 @@ def update_user_info(bot_type,reqinfo):
                 if bot_type == "kakao":
                     genre = body["action"]["detailParams"]["genre"]["value"]
                 elif bot_type == "naver":
-                    genre = body["userInfo"]["entities"]["29ce5a43db2849249a9d3c8e94dcd766"] # entity 등록 후 코드 수정하기
+                    genre = body["userInfo"]["entities"][naver_genre_entity]
                 result = UserInfo.update_user_info(idx, reqinfo, genre)
                 if result == 1:
                     answer = "관심 장르 목록에서 <"+genre+">를 삭제했어"
@@ -298,28 +308,28 @@ def get_book_info(bot_type,reqinfo):
             if bot_type == "kakao":
                 title = body["action"]["detailParams"]["title"]["value"]
             elif bot_type == "naver":
-                title = body["userInfo"]["entities"]["29ce5a43db2849249a9d3c8e94dcd766"] # entity 등록 후 코드 수정하기
+                title = body["userInfo"]["entities"][naver_title_entity]
             result = BookInfo.get_title_to_info(title)
             answer = "책 제목으로 검색했을 때의 결과야.\n" + result
         elif reqinfo == "isbn13-info":
             if bot_type == "kakao":
                 isbn = body["action"]["detailParams"]["isbn13"]["value"]
             elif bot_type == "naver":
-                isbn = body["userInfo"]["entities"]["29ce5a43db2849249a9d3c8e94dcd766"] # entity 등록 후 코드 수정하기
+                isbn = body["userInfo"]["entities"][naver_example_entity]
             result = BookInfo.get_isbn_to_info(isbn)
             answer = "책 isbn13으로 검색했을 때의 결과야.\n" + result
         elif reqinfo == "author":
             if bot_type == "kakao":
                 author = body["action"]["detailParams"]["author"]["value"]
             elif bot_type == "naver":
-                author = body["userInfo"]["entities"]["29ce5a43db2849249a9d3c8e94dcd766"] # entity 등록 후 코드 수정하기
+                author = body["userInfo"]["entities"][naver_author_entity]
             result = BookInfo.get_author_to_info(author)
             answer = "작가 정보로 검색했을 때의 결과야.\n" + result
         elif reqinfo == "title-review":
             if bot_type == "kakao":
                 title = body["action"]["detailParams"]["title"]["value"]
             elif bot_type == "naver":
-                title = body["userInfo"]["entities"]["29ce5a43db2849249a9d3c8e94dcd766"] # entity 등록 후 코드 수정하기
+                title = body["userInfo"]["entities"][naver_title_entity]
             result = BookInfo.get_title_to_review(title)
             answer = "제목으로 검색했을 때의 결과야.\n" + result
         else:
@@ -403,13 +413,13 @@ def recommend_similar(bot_type,reqinfo):
             if bot_type == "kakao":
                 title = body["action"]["detailParams"]["title"]["value"]
             elif bot_type == "naver":
-                title = body["userInfo"]["entities"]["29ce5a43db2849249a9d3c8e94dcd766"] # entity 등록 후 코드 수정하기
+                title = body["userInfo"]["entities"][naver_title_entity]
             answer = recommend_by_title(title)
         elif reqinfo == "author":
             if bot_type == "kakao":
                 author = body["action"]["detailParams"]["author"]["value"]
             elif bot_type == "naver":
-                author = body["userInfo"]["entities"]["29ce5a43db2849249a9d3c8e94dcd766"] # entity 등록 후 코드 수정하기
+                author = body["userInfo"]["entities"][naver_author_entity]
             answer = recommend_by_author(author)
 
         if bot_type == "kakao":
@@ -449,13 +459,13 @@ def recommend_user(bot_type,reqinfo):
                 if bot_type == "kakao":
                     title = body["action"]["detailParams"]["title"]["value"]
                 elif bot_type == "naver":
-                    title = body["userInfo"]["entities"]["29ce5a43db2849249a9d3c8e94dcd766"] # entity 등록 후 코드 수정하기
+                    title = body["userInfo"]["entities"][naver_title_entity]
                 answer = recommend_user_by_title(idx, title)
             elif reqinfo == "author":
                 if bot_type == "kakao":
                     author = body["action"]["detailParams"]["author"]["value"]
                 elif bot_type == "naver":
-                    author = body["userInfo"]["entities"]["29ce5a43db2849249a9d3c8e94dcd766"] # entity 등록 후 코드 수정하기
+                    author = body["userInfo"]["entities"][naver_author_entity]
                 answer = recommend_user_by_author(idx, author)
         else:
             UserInfo.insert_user_idx(idx)
