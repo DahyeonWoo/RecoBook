@@ -107,7 +107,7 @@ class ColumnsFromDB:
         #print("db에 저장된 데이터: ", data)
         mysql_db = conn_mysqldb()
         db_cursor = mysql_db.cursor()
-        sql = f"INSERT INTO User(idx) VALUES(idx)"
+        sql = f"INSERT INTO User(idx) VALUES({idx})"
         db_cursor.execute(sql)  # 해당 사용자의 데이터 리스트를 업데이트
         mysql_db.commit()  # 트랜잭션 저장
         db_cursor.close()
