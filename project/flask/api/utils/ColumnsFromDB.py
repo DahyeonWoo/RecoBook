@@ -94,7 +94,7 @@ class ColumnsFromDB:
         return db_data
 
     @staticmethod
-    def insert_user_idx(idx):
+    def insert_user_idx(user_idx):
         """
         데이터를 db에 삽입하는 함수
         :params table_name: 테이블명
@@ -107,7 +107,7 @@ class ColumnsFromDB:
         #print("db에 저장된 데이터: ", data)
         mysql_db = conn_mysqldb()
         db_cursor = mysql_db.cursor()
-        sql = f"INSERT INTO User(idx) VALUES({idx})"
+        sql = f"INSERT INTO User(idx) VALUES('{user_idx}')"
         db_cursor.execute(sql)  # 해당 사용자의 데이터 리스트를 업데이트
         mysql_db.commit()  # 트랜잭션 저장
         db_cursor.close()
@@ -136,10 +136,7 @@ class ColumnsFromDB:
                 remove_blank = ColumnsFromDB.remove_values_from_list(data, "") # 리스트에 있는는 공백 원소 제거
                 sep_data = ";".join(remove_blank)  # 리스트를 ;구분 문자열로 변환
                 print(sep_data)
-                if col == 'idx': # idx는 완전 일치할 때만 삭제
-                    sql = f"UPDATE {table_name} SET {select_col} = '{sep_data}' WHERE {col} = {param}"  # 해당 사용자의 읽은 책 리스트를 업데이트할 쿼리문
-                else:
-                    sql = f"UPDATE {table_name} SET {select_col} = '{sep_data}' WHERE {col} LIKE REPLACE('%{param}%', ' ', '')"
+                sql = f"UPDATE {table_name} SET {select_col} = '{sep_data}' WHERE {col} LIKE REPLACE('%{param}%', ' ', '')"  # 해당 사용자의 데이터 리스트를 업데이트할 쿼리문
                 db_cursor.execute(sql)  # 해당 사용자의 데이터 리스트를 업데이트
                 mysql_db.commit()  # 트랜잭션 저장
                 db_cursor.close()
@@ -185,10 +182,7 @@ class ColumnsFromDB:
             print("삭제할 내용이 존재하지 않습니다")
             return 2
         sep_data = ";".join(data)  # 리스트를 ,구분 문자열로 변환
-        if col == 'idx': # idx는 완전 일치할 때만 삭제
-            sql = f"UPDATE {table_name} SET {select_col} = '{sep_data}' WHERE {col} = {param}"  # 해당 사용자의 읽은 책 리스트를 업데이트할 쿼리문
-        else:
-            sql = f"UPDATE {table_name} SET {select_col} = '{sep_data}' WHERE {col} LIKE REPLACE('%{param}%', ' ', '')"
+        sql = f"UPDATE {table_name} SET {select_col} = '{sep_data}' WHERE {col} LIKE REPLACE('%{param}%', ' ', '')"  # 해당 사용자의 읽은 책 리스트를 업데이트할 쿼리문
         db_cursor.execute(sql)  # 해당 사용자의 읽은 책 리스트를 업데이트
         mysql_db.commit()  # 트랜잭션 저장
         db_cursor.close()  # 커서 닫기
@@ -203,10 +197,9 @@ if __name__ == "__main__":
     # print(res)
     # res = ColumnsFromDB.get_col_name('Book')
     # res = ColumnsFromDB.get_db_data('isbn13, title', 'Book', 'title', '미스테리아')
-    # res = ColumnsFromDB.get_db_data('bookWant', 'User', 'idx', 3)
+    # res = ColumnsFromDB.get_db_data('bookRead', 'User', 'name', '이현준')
     # res = ColumnsFromDB.get_db_data('interestAuthor', 'User', 'name', '이현준')
-    # res = ColumnsFromDB.insert_db_data("User", "bookWant", "idx", 3, "달러구트 꿈 백화점")
-    res = ColumnsFromDB.delete_db_data("User", "bookWant", "idx", 3, "달러구트 꿈 백화점")
-    # res = ColumnsFromDB.insert_user(1)
-    # res = ColumnsFromDB.get_db_data_only("idx", "User", "idx", 1)
+    # res = ColumnsFromDB.insert_db_data("User", "interestAuthor", "name", "이지후", "김영하")
+    # res = ColumnsFromDB.delete_db_data("User", "interestAuthor", "name", "이지후", "김영하")
+    res = ColumnsFromDB.insert_user(1)
     print(res)

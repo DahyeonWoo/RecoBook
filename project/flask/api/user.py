@@ -11,7 +11,7 @@ from api.utils.ColumnsFromDB import ColumnsFromDB
 
 class UserInfo:
     @staticmethod
-    def get_user_info(idx:int):
+    def get_user_info(idx):
         """
         유저 정보를 가져오는 함수
         :params idx: 유저 인덱스
@@ -20,7 +20,8 @@ class UserInfo:
         user = ColumnsFromDB.get_db_data("*", "User", "idx", idx)
         return json.dumps(user, indent=2, default=str, ensure_ascii=False)
 
-    def get_is_user(idx:int):
+    @staticmethod
+    def get_is_user(idx):
         """
         유저 정보를 가져오는 함수
         :params idx: 유저 인덱스
@@ -29,15 +30,15 @@ class UserInfo:
         return ColumnsFromDB.get_db_data_only("idx", "User", "idx", idx)
 
     @staticmethod
-    def insert_user_idx(idx: int):
+    def insert_user_idx(user_idx):
         """
         유저 idx를 등록하는 함수
         :params idx: 유저 인덱스
         """
-        return ColumnsFromDB.insert_user_idx(idx)
+        return ColumnsFromDB.insert_user_idx(user_idx)
 
     @staticmethod
-    def insert_user_info(idx:int, select_col:str, value:str):
+    def insert_user_info(idx, select_col, value):
         """
         유저 정보에 삽입하는 함수
         :params idx: 유저 인덱스
@@ -47,7 +48,7 @@ class UserInfo:
         return ColumnsFromDB.insert_db_data("User", select_col, "idx", idx, value)
 
     @staticmethod
-    def update_user_info(idx:int, select_col:str, value:str):
+    def update_user_info(idx, select_col, value):
         """
         유저 정보에 삽입하는 함수
         :params idx: 유저 인덱스
