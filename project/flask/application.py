@@ -8,7 +8,7 @@ from api import create_app
 
 from api.user import *
 from api.book import *
-from api.recommendations import recommend_by_title, recommend_by_author
+from api.recommendations import *
 from api.statistics import *
 
 from api.KakaoEvent import KakaoEvent
@@ -19,13 +19,11 @@ app = create_app()
 #app = Flask(__name__)
 
 
-# naver entity 전역변수 설정
-
+# naver entity 전역변수
 naver_example_entity = "29ce5a43db2849249a9d3c8e94dcd766"
 naver_title_entity = "f76d07044c714ebabcc710620a8e05a3"
 naver_author_entity = "330cbe05bc954ee68b82022b73fd4a68"
 naver_genre_entity = "fb93fe2f70964641ae5a5e11fa74324c"
-
 
 
 # 첫 화면
@@ -70,24 +68,24 @@ def get_user_info(bot_type,reqinfo):
                     answer = "우선 읽은 책을 등록해줘"
             elif reqinfo == "bookWant":
                 if bookWant != None and len(bookWant) != 0:
-                    answer = "읽고 싶은 책들은 <"+bookWant+">야."
+                    answer = "읽고 싶은 책 목록은 <"+bookWant+">야."
                 else:
                     answer = "우선 읽고 싶은 책을 등록해줘"
             elif reqinfo == "interestBook":
                 if interestBook != None and len(interestBook) != 0:
-                    answer = name+", <"+interestBook+"> 책을 좋아해."
+                    answer = "관심 있는 책 목록은 <"+interestBook+">야."
                 else:
                     answer = "우선 관심 책을 등록해줘"
             elif reqinfo == "interestAuthor":
                 if interestAuthor != None and len(interestAuthor) != 0:
-                    answer = name+", <"+interestAuthor+"> 작가를 좋아해."
+                    answer = "관심 있는 작가 목록은 <"+interestAuthor+">야."
                 else:
                     answer = "우선 관심 작가를 등록해줘"
             elif reqinfo == "interestCategory":
                 if interestCategory != None and len(interestCategory) != 0:
-                    answer = name+", <"+interestCategory+"> 장르를 좋아해."
+                    answer = "관심 장르 목록은 <"+interestCategory+">야."
                 else:
-                    answer = "우선 관심 분야를 등록해줘"
+                    answer = "우선 관심 장르를 등록해줘"
             else:
                 answer = "레꼬북에 없는 기능이야. 계속 개발중이니까, 더 많은 기능을 기대해줘!"
         else:
@@ -118,7 +116,6 @@ def get_user_info(bot_type,reqinfo):
 @app.route("/<bot_type>/user/insert/<reqinfo>", methods=["POST"])
 def insert_user_info(bot_type,reqinfo):
     body = request.get_json()
-    idx = body["userInfo"]["id"]
 
     try:
         if bot_type == "kakao":
@@ -136,7 +133,6 @@ def insert_user_info(bot_type,reqinfo):
                 elif bot_type == "naver":
                     title = body["userInfo"]["entities"][naver_title_entity]
                 result = UserInfo.insert_user_info(idx, reqinfo, title)
-                print(result)
                 if result == 1:
                     answer = "읽은 책으로 <"+title+">가 등록됐어."
                 elif result == 2:
@@ -414,13 +410,13 @@ def recommend_similar(bot_type,reqinfo):
                 title = body["action"]["detailParams"]["title"]["value"]
             elif bot_type == "naver":
                 title = body["userInfo"]["entities"][naver_title_entity]
-            answer = recommend_by_title(title)
+            answer = NLPRecommend.recommend_by_title_using_reviews(title)
         elif reqinfo == "author":
             if bot_type == "kakao":
                 author = body["action"]["detailParams"]["author"]["value"]
             elif bot_type == "naver":
                 author = body["userInfo"]["entities"][naver_author_entity]
-            answer = recommend_by_author(author)
+            answer = NLPRecommend.recommend_by_author(author)
 
         if bot_type == "kakao":
             return KakaoText().send_response({"Answer": answer})
@@ -460,13 +456,15 @@ def recommend_user(bot_type,reqinfo):
                     title = body["action"]["detailParams"]["title"]["value"]
                 elif bot_type == "naver":
                     title = body["userInfo"]["entities"][naver_title_entity]
-                answer = recommend_user_by_title(idx, title)
+                # answer = NLPRecommend.recommend_user_by_title(idx, title)
+                answer = "기능 추가중이야"
             elif reqinfo == "author":
                 if bot_type == "kakao":
                     author = body["action"]["detailParams"]["author"]["value"]
                 elif bot_type == "naver":
                     author = body["userInfo"]["entities"][naver_author_entity]
-                answer = recommend_user_by_author(idx, author)
+                # answer = NLPRecommend.recommend_user_by_author(idx, author)
+                answer = "기능 추가중이야"
         else:
             UserInfo.insert_user_idx(idx)
             answer = "확장 기능을 사용하려면 유저 등록을 해야해. 유저 등록이 완료됐으니 기능을 다시 실행해줄래? 민감한 개인정보는 사용하지 않으니 걱정마!"
