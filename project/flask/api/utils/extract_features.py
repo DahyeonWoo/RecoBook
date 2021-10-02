@@ -11,7 +11,7 @@ def extract_book_info():
     """
     conn = conn_mysqldb()
     cursor = conn.cursor()
-    sql = "SELECT isbn13,title,author FROM Book;"
+    sql = "SELECT isbn13,title,author,description FROM Book;"
     cursor.execute(sql)
     book_info = cursor.fetchall()
     cursor.close()
