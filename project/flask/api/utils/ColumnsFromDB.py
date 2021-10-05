@@ -55,24 +55,27 @@ class ColumnsFromDB:
         """
         mysql_db = conn_mysqldb()
         db_cursor = mysql_db.cursor()
-        sql = f"SELECT {db_col} FROM {table_name} WHERE {col} = '{param}'"
-        db_cursor.execute(sql)
-        db_data = db_cursor.fetchone()
-        db_cursor.close()
-        total_db_col = ColumnsFromDB.get_col_name(table_name)
-        col_list = db_col.split(",")
-        #print('테이블 column 리스트:', col_list)
-        dict = create_dict()
-        if db_col == "*":
-            for i in range(len(total_db_col)):
-                dict.add(total_db_col[i], db_data[i])
-        else:
-            for i, col in enumerate(col_list):
-                if col.strip() in total_db_col:
-                    dict.add(col.strip(), db_data[i])
-                else:
-                    print("부적절한 col, 문법 체크")
-        return dict
+        try:
+            sql = f"SELECT {db_col} FROM {table_name} WHERE {col} LIKE '%{param}%'"
+            db_cursor.execute(sql)
+            db_data = db_cursor.fetchone()
+            db_cursor.close()
+            total_db_col = ColumnsFromDB.get_col_name(table_name)
+            col_list = db_col.split(",")
+            #print('테이블 column 리스트:', col_list)
+            dict = create_dict()
+            if db_col == "*":
+                for i in range(len(total_db_col)):
+                    dict.add(total_db_col[i], db_data[i])
+            else:
+                for i, col in enumerate(col_list):
+                    if col.strip() in total_db_col:
+                        dict.add(col.strip(), db_data[i])
+                    else:
+                        print("부적절한 col, 문법 체크")
+            return dict
+        except:
+            return None
 
     @staticmethod
     def get_db_data_only(db_col, table_name, col, param):
@@ -197,7 +200,8 @@ class ColumnsFromDB:
 
 
 if __name__ == "__main__":
-    # res = ColumnsFromDB.get_db_data('*', 'Book', 'title', '미스테리아') # done
+    # res = ColumnsFromDB.get_db_data('*', 'Book', 'title', '달러구트 꿈 백화점') # done
+    res = ColumnsFromDB.get_db_data('*', 'Book', 'isbn13', '9771197225987')
     # print(res)
     # res = ColumnsFromDB.get_db_data('isbn13, title', 'Book', 'title', '미스테리아') # done
     # print(res)
@@ -206,7 +210,7 @@ if __name__ == "__main__":
     # res = ColumnsFromDB.get_db_data('bookWant', 'User', 'idx', 3)
     # res = ColumnsFromDB.get_db_data('interestAuthor', 'User', 'name', '이현준')
     # res = ColumnsFromDB.insert_db_data("User", "bookWant", "idx", 3, "달러구트 꿈 백화점")
-    res = ColumnsFromDB.delete_db_data("User", "bookWant", "idx", 3, "달러구트 꿈 백화점")
+    # res = ColumnsFromDB.delete_db_data("User", "bookWant", "idx", 3, "달러구트 꿈 백화점")
     # res = ColumnsFromDB.insert_user(1)
     # res = ColumnsFromDB.get_db_data_only("idx", "User", "idx", 1)
     print(res)
