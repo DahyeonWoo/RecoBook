@@ -186,7 +186,7 @@ def insert_user_info(bot_type,reqinfo):
                     top_n = 5
                     data = Top.get_topn_interestAuthor(top_n)
                     result = Top.accessing_dict_info(data)
-                    answer = '해당 책이 레꼬북에 등록되어 있지 않아서 관심 작가에 등록할 수 없어. 다음과 같은 책을 등록해보는건 어때? 레꼬북에 사람들이 등록한 관심 작가 순위야.\n' + result
+                    answer = '해당 작가가 레꼬북에 등록되어 있지 않아서 관심 작가에 등록할 수 없어. 다음과 같은 책을 등록해보는건 어때? 레꼬북에 사람들이 등록한 관심 작가 순위야.\n' + result
             elif reqinfo == "interestCategory":
                 if bot_type == "kakao":
                     genre = body["action"]["detailParams"]["genre"]["value"]
@@ -201,7 +201,7 @@ def insert_user_info(bot_type,reqinfo):
                     top_n = 5
                     data = Top.get_topn_interestCategory(top_n)
                     result = Top.accessing_dict_info(data)
-                    answer = '해당 책이 레꼬북에 등록되어 있지 않아서 관심 장르에 등록할 수 없어. 다음과 같은 장르를 등록해보는건 어때? 레꼬북에 사람들이 등록한 인기 관심 잘르 순위야.\n' + result
+                    answer = '해당 장르가 레꼬북에 등록되어 있지 않아서 관심 장르에 등록할 수 없어. 다음과 같은 장르를 등록해보는건 어때? 레꼬북에 사람들이 등록한 인기 관심 잘르 순위야.\n' + result
             else:
                 answer = "레꼬북에 없는 기능이야. 계속 개발중이니까, 더 많은 기능을 기대해줘!"
         else:

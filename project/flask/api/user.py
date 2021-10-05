@@ -49,7 +49,9 @@ class UserInfo:
             if not data:
                 return None
         elif select_col == 'interestAuthor':
-            data = ColumnsFromDB.get_db_data('title', 'Author', 'name', value)
+            data = ColumnsFromDB.get_db_data('name', 'AuthorOrigin', 'name', value)
+        elif select_col == 'interestCategory':
+            data = ColumnsFromDB.get_db_data('category', 'Book', 'category', value)
             if not data:
                 return None
         return ColumnsFromDB.insert_db_data("User", select_col, "idx", idx, value)
