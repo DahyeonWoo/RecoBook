@@ -44,6 +44,14 @@ class UserInfo:
         :params select col: 가져올 column (ex: bookRead)
         :params value: 추가할 값 (ex: title)
         """
+        if select_col in ['bookRead', 'bookWant', 'interestBook']:
+            data = ColumnsFromDB.get_db_data('title', 'Book', 'title', value)
+            if not data:
+                return None
+        elif select_col == 'interestAuthor':
+            data = ColumnsFromDB.get_db_data('title', 'Author', 'name', value)
+            if not data:
+                return None
         return ColumnsFromDB.insert_db_data("User", select_col, "idx", idx, value)
 
     @staticmethod
@@ -191,7 +199,8 @@ class UserGenre:
 
 if __name__ == "__main__":
     # post_user('이독자','2000-07-07',22, 'M','밤의 여행자들','밝은 밤','이웃집 밤','이지은','소설')
-    res = UserRead.get_read_book('이현준') # 읽은 책 가져오기
+    res = UserInfo.get_user_info(3)
+    # res = UserRead.get_read_book('이현준') # 읽은 책 가져오기
     # print(list(res.values())[0])
     # res = UserRead.insert_read_book("이현준", "아몬드")  # 읽은 책 추가
     # res = UserRead.delete_read_book('김민준', '아몬드') # 읽은 책 삭제
