@@ -48,7 +48,7 @@ def get_user_info(bot_type,reqinfo):
             idx = body["userInfo"]["id"]
         else:
             abort(404)
-
+    
         isUser = UserInfo.get_is_user(idx)
 
         if isUser != None:
@@ -125,6 +125,7 @@ def insert_user_info(bot_type,reqinfo):
         else:
             abort(404)
 
+        print(idx)
         isUser = UserInfo.get_is_user(idx)
         if isUser != None:
             if reqinfo == "bookRead":
