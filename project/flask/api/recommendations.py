@@ -40,9 +40,9 @@ class NLPRecommend:
         return_list=list()
         for i in book_indices:
             return_list.append(books.loc[i]['author'])
-        authors = '\n'.join(return_list)
+        #authors = '\n'.join(return_list)
 
-        return authors
+        return return_list
 
 
     #제목 기반 추천
@@ -79,9 +79,9 @@ class NLPRecommend:
         return_list=list()
         for i in book_indices:
             return_list.append(books.loc[i]['title'])
-        titles = '\n'.join(return_list)
+        #titles = '\n'.join(return_list)
 
-        return titles
+        return return_list
 
     def recommend_by_title_using_description(title):
         """
@@ -115,6 +115,9 @@ def str_to_vector(str_vector):
     return vector
 
 if __name__ == '__main__':
-    title = '7년의 밤'
-    print(recommend_by_title_using_reviews(title))
-    recommend_by_title_using_description(title)
+    #title = '7년의 밤'
+    #ans = NLPRecommend.recommend_by_title_using_reviews(title)
+    #print(ans)
+    author = '파울로 코엘료'
+    ans = NLPRecommend.recommend_by_author(author)
+    print(ans)

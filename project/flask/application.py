@@ -13,6 +13,7 @@ from api.statistics import *
 
 from api.KakaoEvent import KakaoEvent
 from api.KakaoText import KakaoText
+from api.KakaoStyle import KakaoStyle
 
 # Flask 어플리케이션
 app = create_app()
@@ -307,14 +308,16 @@ def get_book_info(bot_type,reqinfo):
             elif bot_type == "naver":
                 title = body["userInfo"]["entities"][naver_title_entity]
             result = BookInfo.get_title_to_info(title)
-            answer = "책 제목으로 검색했을 때의 결과야.\n" + result
+            print("책 제목으로 검색했을 때의 결과야.")
+
         elif reqinfo == "isbn13-info":
             if bot_type == "kakao":
                 isbn = body["action"]["detailParams"]["isbn13"]["value"]
             elif bot_type == "naver":
                 isbn = body["userInfo"]["entities"][naver_example_entity]
             result = BookInfo.get_isbn_to_info(isbn)
-            answer = "책 isbn13으로 검색했을 때의 결과야.\n" + result
+            print("책 isbn13으로 검색했을 때의 결과야.")
+            
         elif reqinfo == "author":
             if bot_type == "kakao":
                 author = body["action"]["detailParams"]["author"]["value"]
@@ -333,7 +336,9 @@ def get_book_info(bot_type,reqinfo):
             answer = "레꼬북에 없는 기능이야. 계속 개발중이니까, 더 많은 기능을 기대해줘!"
 
         if bot_type == "kakao":
-            return KakaoText().send_response({"Answer": answer})
+            #return KakaoText().send_response({"Answer": answer})
+            return KakaoStyle.Style1(result["title"], result["cover"], result["author"], result["link"])
+
         elif bot_type == "naver":
             data = "GET" + reqinfo
             responseBody = {
@@ -360,6 +365,8 @@ def get_book_info_top(bot_type,reqinfo):
             data = Top.get_topn_bookRead(top_n)
             result = Top.accessing_dict_info(data)
             answer = "현재까지 사람들이 많이 읽은 책 목록이야.\n" + result
+            print('print:' ,result)
+            
         elif reqinfo == "bookWant":
             data = Top.get_topn_bookWant(top_n)
             result = Top.accessing_dict_info(data)
@@ -409,19 +416,30 @@ def recommend_similar(bot_type,reqinfo):
         if reqinfo == "title":
             if bot_type == "kakao":
                 title = body["action"]["detailParams"]["title"]["value"]
+                answer = NLPRecommend.recommend_by_title_using_reviews(title)
+                return KakaoStyle.Style2(title, answer)
+
             elif bot_type == "naver":
                 title = body["userInfo"]["entities"][naver_title_entity]
             answer = NLPRecommend.recommend_by_title_using_reviews(title)
+            
         elif reqinfo == "author":
             if bot_type == "kakao":
                 author = body["action"]["detailParams"]["author"]["value"]
+                answer = NLPRecommend.recommend_by_author(author)
+                return
+
+
             elif bot_type == "naver":
                 author = body["userInfo"]["entities"][naver_author_entity]
             answer = NLPRecommend.recommend_by_author(author)
-
+        
+        '''
         if bot_type == "kakao":
-            return KakaoText().send_response({"Answer": answer})
-        elif bot_type == "naver":
+            #return KakaoText().send_response({"Answer": answer})
+            return KakaoStyle.Style2(title, answer)
+        '''
+        if bot_type == "naver":
             data = "RECOMMENDsimilar-" + reqinfo
             responseBody = {
                 data: [
