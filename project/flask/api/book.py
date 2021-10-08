@@ -14,78 +14,8 @@ class BookInfo:
         :return: 도서 정보 딕셔너리
         """
         data = ColumnsFromDB.get_db_data("*", "Book", "title", title)
-        return json.dumps(data, indent=2, default=str, ensure_ascii=False)
-
-    def get_title_to_info_style(title):
-        data = ColumnsFromDB.get_db_data(db_col="*", table_name="Book", col="title", param=title)
-        
-        responseBody = {
-            "version": "2.0",
-            "template": {
-                "outputs": [
-                    {
-                        "itemCard": {
-                            "imageTitle": {
-                                "title": data['title'],
-                                "description": data['description']
-                            },
-                            "title": "",
-                            "description": "",
-                            "thumbnail": {
-                                "imageUrl": data['cover'],
-                                "width": 800,
-                                "height": 800
-                            },
-                            '''
-                            "profile": {
-                                "title": "AA Airline",
-                                "imageUrl": "https://t1.kakaocdn.net/openbuilder/docs_image/aaairline.jpg"
-                            },
-                            '''
-                            "itemList": [
-                                {
-                                    "title": "ISBN13",
-                                    "description": data['isbn13']
-                                },
-                                {
-                                    "title": "작가",
-                                    "description": data['author']
-                                },
-                                {
-                                    "title": "출판사",
-                                    "description": data['publisher']
-                                },
-                                {
-                                    "title": "가격",
-                                    "description": data['priceStandard']
-                                },
-                                {
-                                    "title": "평점",
-                                    "description": data['customerReviewRank']
-                                }
-                            ],
-                            '''
-                            "itemListAlignment" : "right",
-                            "itemListSummary": {
-                                "title": "Total",
-                                "description": "$4,032.54"
-                            },
-                            '''
-                            "buttons": [
-                                {
-                                    "label": "상세보기",
-                                    "action": "webLink",
-                                    "webLinkUrl": data['link']
-                                }
-                            ],
-                            "buttonLayout" : "vertical"
-                        }
-                    }
-                ]
-            }
-        }
-        return responseBody
-
+        #return json.dumps(data, indent=2, default=str, ensure_ascii=False)
+        return data
 
     def get_isbn_to_info(isbn13):
         """
@@ -141,7 +71,7 @@ if __name__ == "__main__":
     # res = Book.get_title_to_review('달러구트')
     res = BookInfo.get_title_to_info('달러구트 꿈 백화점')
     # res = get_title_to_info2('금각 사')
-    # res = get_author_to_info('이미예')
+    res = BookInfo.get_author_to_info('파울로 코엘료')
     # res = BookInfo.get_isbn_to_info("9791165341909")
     # res = BookInfo.get_title_to_review('달러구트 꿈 백화점')
     # print(res)
