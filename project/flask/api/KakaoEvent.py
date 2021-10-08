@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+from api.book import BookInfo
+
+
 class KakaoEvent:
     def __init__(self):
         # 템플릿 버전
@@ -35,6 +38,79 @@ class KakaoEvent:
             responseBody['template']['outputs'].append(self.simpleTextComponent(bot_resp['Answer']))
 
         return responseBody
+
+    # 리스트카드(5개)
+    def listCardTemplate(self, title, topFive):
+        first = topFive[0]
+        second = topFive[1]
+        third = topFive[2]
+        fourth = topFive[3]
+        fifth = topFive[4]
+
+        responseBody = {
+            "version": self.version,
+            "template": {
+                "outputs": [
+                {
+                    "listCard": {
+                    "header": {
+                        "title": title
+                    },
+                    "items": [
+                        {
+                        "title": first,
+                        #author
+                        "description": BookInfo.get_title_to_info(first)['author'],
+                        "imageUrl": BookInfo.get_title_to_info(first)['cover'],
+                        "link": {
+                            "web": BookInfo.get_title_to_info(first)['link']
+                            }
+                        },
+                        {
+                        "title": second,
+                        #author
+                        "description": BookInfo.get_title_to_info(second)['author'],
+                        "imageUrl": BookInfo.get_title_to_info(second)['cover'],
+                        "link": {
+                            "web": BookInfo.get_title_to_info(second)['link']
+                            }
+                        },
+                        {
+                        "title": third,
+                        #author
+                        "description": BookInfo.get_title_to_info(third)['author'],
+                        "imageUrl": BookInfo.get_title_to_info(third)['cover'],
+                        "link": {
+                            "web": BookInfo.get_title_to_info(third)['link']
+                            }
+                        },
+                        {
+                        "title": fourth,
+                        #author
+                        "description": BookInfo.get_title_to_info(fourth)['author'],
+                        "imageUrl": BookInfo.get_title_to_info(fourth)['cover'],
+                        "link": {
+                            "web": BookInfo.get_title_to_info(fourth)['link']
+                            }
+                        },
+                        {
+                        "title": fifth,
+                        #author
+                        "description": BookInfo.get_title_to_info(fifth)['author'],
+                        "imageUrl": BookInfo.get_title_to_info(fifth)['cover'],
+                        "link": {
+                            "web": BookInfo.get_title_to_info(fifth)['link']
+                            }
+                        }
+                    ]
+                    }
+                }
+                ]
+            }
+
+        }
+        return responseBody
+
 
 
 if __name__ == '__main__':
