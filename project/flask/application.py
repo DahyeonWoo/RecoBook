@@ -55,7 +55,7 @@ def get_user_info(bot_type,reqinfo):
         if isUser != None:
             userinfo = UserInfo.get_user_info(idx)
             result = json.loads(userinfo)
-            # name = result["name"]
+            # 유저 정보
             bookRead = result["bookRead"]
             bookWant = result['bookWant']
             interestBook = result["interestBook"]
@@ -139,6 +139,11 @@ def insert_user_info(bot_type,reqinfo):
                     answer = "읽은 책으로 <"+title+">가 등록됐어."
                 elif result == 2:
                     answer = "이미 읽은 책으로 등록한 도서야"
+                elif not result:
+                    top_n = 5
+                    data = Top.get_topn_bookRead(top_n)
+                    result = Top.accessing_dict_info(data)
+                    answer = '해당 책이 레꼬북에 등록되어 있지 않아서 읽은 책에 등록할 수 없어. 다음과 같은 책을 등록해보는건 어때? 레꼬북에 사람들이 등록한 인기도서 순위야.\n' + result
             elif reqinfo == "bookWant":
                 if bot_type == "kakao":
                     title = body["action"]["detailParams"]["title"]["value"]
@@ -149,6 +154,11 @@ def insert_user_info(bot_type,reqinfo):
                     answer = "위시리스트에 <"+title+">가 등록됐어"
                 elif result == 2:
                     answer = "이미 위시리스트에 등록한 도서야."
+                elif not result:
+                    top_n = 5
+                    data = Top.get_topn_bookWant(top_n)
+                    result = Top.accessing_dict_info(data)
+                    answer = '해당 책이 레꼬북에 등록되어 있지 않아서 위시리스트에 등록할 수 없어. 다음과 같은 책을 등록해보는건 어때? 레꼬북에 사람들이 등록한 인기 위시리스트 순위야.\n' + result
             elif reqinfo == "interestBook":
                 if bot_type == "kakao":
                     title = body["action"]["detailParams"]["title"]["value"]
@@ -159,6 +169,11 @@ def insert_user_info(bot_type,reqinfo):
                     answer = "관심 도서에 <"+title+">가 등록됐어"
                 elif result == 2:
                     answer = "이미 등록한 관심 도서야."
+                elif not result:
+                    top_n = 5
+                    data = Top.get_topn_interestBook(top_n)
+                    result = Top.accessing_dict_info(data)
+                    answer = '해당 책이 레꼬북에 등록되어 있지 않아서 관심도서에 등록할 수 없어. 다음과 같은 책을 등록해보는건 어때? 레꼬북에 사람들이 등록한 인기 관심도서 순위야.\n' + result
             elif reqinfo == "interestAuthor":
                 if bot_type == "kakao":
                     author = body["action"]["detailParams"]["author"]["value"]
@@ -169,6 +184,11 @@ def insert_user_info(bot_type,reqinfo):
                     answer = "관심 작가에 <"+author+">가 등록됐어"
                 elif result == 2:
                     answer = "이미 등록한 관심 작가야"
+                elif not result:
+                    top_n = 5
+                    data = Top.get_topn_interestAuthor(top_n)
+                    result = Top.accessing_dict_info(data)
+                    answer = '해당 작가가 레꼬북에 등록되어 있지 않아서 관심 작가에 등록할 수 없어. 다음과 같은 책을 등록해보는건 어때? 레꼬북에 사람들이 등록한 관심 작가 순위야.\n' + result
             elif reqinfo == "interestCategory":
                 if bot_type == "kakao":
                     genre = body["action"]["detailParams"]["genre"]["value"]
@@ -179,6 +199,11 @@ def insert_user_info(bot_type,reqinfo):
                     answer = "관심 장르에 <"+genre+">가 등록됐어"
                 elif result == 2:
                     answer = "이미 등록한 관심 장르야"
+                elif not result:
+                    top_n = 5
+                    data = Top.get_topn_interestCategory(top_n)
+                    result = Top.accessing_dict_info(data)
+                    answer = '해당 장르가 레꼬북에 등록되어 있지 않아서 관심 장르에 등록할 수 없어. 다음과 같은 장르를 등록해보는건 어때? 레꼬북에 사람들이 등록한 인기 관심 잘르 순위야.\n' + result
             else:
                 answer = "레꼬북에 없는 기능이야. 계속 개발중이니까, 더 많은 기능을 기대해줘!"
         else:
@@ -308,30 +333,40 @@ def get_book_info(bot_type,reqinfo):
             elif bot_type == "naver":
                 title = body["userInfo"]["entities"][naver_title_entity]
             result = BookInfo.get_title_to_info(title)
-            print("책 제목으로 검색했을 때의 결과야.")
-
+            if not result:
+                answer = "해당 책이 레꼬북에 없는 것 같네."
+            else:
+                answer = "책 제목으로 검색했을 때의 결과야.\n" + result
         elif reqinfo == "isbn13-info":
             if bot_type == "kakao":
                 isbn = body["action"]["detailParams"]["isbn13"]["value"]
             elif bot_type == "naver":
                 isbn = body["userInfo"]["entities"][naver_example_entity]
             result = BookInfo.get_isbn_to_info(isbn)
-            print("책 isbn13으로 검색했을 때의 결과야.")
-            
-        elif reqinfo == "author":
+            if not result:
+                answer = "해당 책이 레꼬북에 없는 것 같네."
+            else:
+                answer = "책 ISBN 번호로 검색했을 때의 결과야.\n" + result
+        elif reqinfo == "author-info":
             if bot_type == "kakao":
                 author = body["action"]["detailParams"]["author"]["value"]
             elif bot_type == "naver":
                 author = body["userInfo"]["entities"][naver_author_entity]
             result = BookInfo.get_author_to_info(author)
-            answer = "작가 정보로 검색했을 때의 결과야.\n" + result
+            if not result:
+                answer = "해당 작가가 레꼬북에 없는 것 같네."
+            else:
+                answer = "작가 정보로 검색했을 때의 결과야.\n" + result
         elif reqinfo == "title-review":
             if bot_type == "kakao":
                 title = body["action"]["detailParams"]["title"]["value"]
             elif bot_type == "naver":
                 title = body["userInfo"]["entities"][naver_title_entity]
             result = BookInfo.get_title_to_review(title)
-            answer = "제목으로 검색했을 때의 결과야.\n" + result
+            if not result:
+                answer = "해당 책이 레꼬북에 없는 것 같네."
+            else:
+                answer = "제목으로 검색했을 때의 결과야.\n" + result
         else:
             answer = "레꼬북에 없는 기능이야. 계속 개발중이니까, 더 많은 기능을 기대해줘!"
 
@@ -422,7 +457,10 @@ def recommend_similar(bot_type,reqinfo):
             elif bot_type == "naver":
                 title = body["userInfo"]["entities"][naver_title_entity]
             answer = NLPRecommend.recommend_by_title_using_reviews(title)
-            
+            if not answer:
+                answer = NLPRecommend.recommend_by_title_using_description(title)
+            if not answer:
+                answer = "해당 책이 레꼬북에 등록되어 있지 않아."
         elif reqinfo == "author":
             if bot_type == "kakao":
                 author = body["action"]["detailParams"]["author"]["value"]
@@ -433,8 +471,9 @@ def recommend_similar(bot_type,reqinfo):
             elif bot_type == "naver":
                 author = body["userInfo"]["entities"][naver_author_entity]
             answer = NLPRecommend.recommend_by_author(author)
-        
-        '''
+            if not answer:
+                answer = "해당 작가는 레꼬북에 등록되어 있지 않아."
+
         if bot_type == "kakao":
             #return KakaoText().send_response({"Answer": answer})
             return KakaoStyle.Style2(title, answer)

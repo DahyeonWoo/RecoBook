@@ -55,24 +55,30 @@ class ColumnsFromDB:
         """
         mysql_db = conn_mysqldb()
         db_cursor = mysql_db.cursor()
-        sql = f"SELECT {db_col} FROM {table_name} WHERE {col} = '{param}'"
-        db_cursor.execute(sql)
-        db_data = db_cursor.fetchone()
-        db_cursor.close()
-        total_db_col = ColumnsFromDB.get_col_name(table_name)
-        col_list = db_col.split(",")
-        #print('테이블 column 리스트:', col_list)
-        dict = create_dict()
-        if db_col == "*":
-            for i in range(len(total_db_col)):
-                dict.add(total_db_col[i], db_data[i])
-        else:
-            for i, col in enumerate(col_list):
-                if col.strip() in total_db_col:
-                    dict.add(col.strip(), db_data[i])
-                else:
-                    print("부적절한 col, 문법 체크")
-        return dict
+        try:
+            if col == 'idx':
+                sql = f"SELECT {db_col} FROM {table_name} WHERE {col} = '{param}'"
+            else:
+                sql = f"SELECT {db_col} FROM {table_name} WHERE {col} LIKE '%{param}%'"
+            db_cursor.execute(sql)
+            db_data = db_cursor.fetchone()
+            db_cursor.close()
+            total_db_col = ColumnsFromDB.get_col_name(table_name)
+            col_list = db_col.split(",")
+            #print('테이블 column 리스트:', col_list)
+            dict = create_dict()
+            if db_col == "*":
+                for i in range(len(total_db_col)):
+                    dict.add(total_db_col[i], db_data[i])
+            else:
+                for i, col in enumerate(col_list):
+                    if col.strip() in total_db_col:
+                        dict.add(col.strip(), db_data[i])
+                    else:
+                        print("부적절한 col, 문법 체크")
+            return dict
+        except:
+            return None
 
     @staticmethod
     def get_db_data_only(db_col, table_name, col, param):
@@ -87,10 +93,13 @@ class ColumnsFromDB:
         """
         mysql_db = conn_mysqldb()
         db_cursor = mysql_db.cursor()
-        sql = f"SELECT {db_col} FROM {table_name} WHERE {col} = '{param}'"
-        db_cursor.execute(sql)
-        db_data = db_cursor.fetchone()
-        db_cursor.close()
+        try:
+            sql = f"SELECT {db_col} FROM {table_name} WHERE {col} = '{param}'"
+            db_cursor.execute(sql)
+            db_data = db_cursor.fetchone()
+            db_cursor.close()
+        except:
+            return None
         return db_data
 
     @staticmethod
@@ -133,10 +142,13 @@ class ColumnsFromDB:
             data = list(set(data))
             if value.replace(" ", "") not in data:  # 데이터가 이미 리스트에 있는지 확인
                 data.append(value)  # 리스트에 없는 경우 데이터 추가
-                remove_blank = ColumnsFromDB.remove_values_from_list(data, "") # 리스트에 있는는 공백 원소 제거
+                remove_blank = ColumnsFromDB.remove_values_from_list(data, "") # 리스트에 있는 공백 원소 제거
                 sep_data = ";".join(remove_blank)  # 리스트를 ;구분 문자열로 변환
                 print(sep_data)
-                sql = f"UPDATE {table_name} SET {select_col} = '{sep_data}' WHERE {col} LIKE REPLACE('%{param}%', ' ', '')"  # 해당 사용자의 데이터 리스트를 업데이트할 쿼리문
+                if col == 'idx': # idx는 완전 일치할 때만 삭제
+                    sql = f"UPDATE {table_name} SET {select_col} = '{sep_data}' WHERE {col} = '{param}'"  # 해당 사용자의 읽은 책 리스트를 업데이트할 쿼리문
+                else:
+                    sql = f"UPDATE {table_name} SET {select_col} = '{sep_data}' WHERE {col} LIKE REPLACE('%{param}%', ' ', '')"
                 db_cursor.execute(sql)  # 해당 사용자의 데이터 리스트를 업데이트
                 mysql_db.commit()  # 트랜잭션 저장
                 db_cursor.close()
@@ -182,7 +194,10 @@ class ColumnsFromDB:
             print("삭제할 내용이 존재하지 않습니다")
             return 2
         sep_data = ";".join(data)  # 리스트를 ,구분 문자열로 변환
-        sql = f"UPDATE {table_name} SET {select_col} = '{sep_data}' WHERE {col} LIKE REPLACE('%{param}%', ' ', '')"  # 해당 사용자의 읽은 책 리스트를 업데이트할 쿼리문
+        if col == 'idx': # idx는 완전 일치할 때만 삭제
+            sql = f"UPDATE {table_name} SET {select_col} = '{sep_data}' WHERE {col} = '{param}'"  # 해당 사용자의 읽은 책 리스트를 업데이트할 쿼리문
+        else:
+            sql = f"UPDATE {table_name} SET {select_col} = '{sep_data}' WHERE {col} LIKE REPLACE('%{param}%', ' ', '')"
         db_cursor.execute(sql)  # 해당 사용자의 읽은 책 리스트를 업데이트
         mysql_db.commit()  # 트랜잭션 저장
         db_cursor.close()  # 커서 닫기
@@ -191,7 +206,8 @@ class ColumnsFromDB:
 
 
 if __name__ == "__main__":
-    # res = ColumnsFromDB.get_db_data('*', 'Book', 'title', '미스테리아') # done
+    # res = ColumnsFromDB.get_db_data('*', 'Book', 'title', '달러구트 꿈 백화점') # done
+    res = ColumnsFromDB.get_db_data('*', 'Book', 'isbn13', '9771197225987')
     # print(res)
     # res = ColumnsFromDB.get_db_data('isbn13, title', 'Book', 'title', '미스테리아') # done
     # print(res)
@@ -199,7 +215,8 @@ if __name__ == "__main__":
     # res = ColumnsFromDB.get_db_data('isbn13, title', 'Book', 'title', '미스테리아')
     # res = ColumnsFromDB.get_db_data('bookRead', 'User', 'name', '이현준')
     # res = ColumnsFromDB.get_db_data('interestAuthor', 'User', 'name', '이현준')
-    # res = ColumnsFromDB.insert_db_data("User", "interestAuthor", "name", "이지후", "김영하")
-    # res = ColumnsFromDB.delete_db_data("User", "interestAuthor", "name", "이지후", "김영하")
-    res = ColumnsFromDB.insert_user(1)
+    # res = ColumnsFromDB.insert_db_data("User", "bookWant", "idx", 3, "달러구트 꿈 백화점")
+    # res = ColumnsFromDB.delete_db_data("User", "bookWant", "idx", 3, "달러구트 꿈 백화점")
+    # res = ColumnsFromDB.insert_user(1)
+    # res = ColumnsFromDB.get_db_data_only("idx", "User", "idx", 1)
     print(res)

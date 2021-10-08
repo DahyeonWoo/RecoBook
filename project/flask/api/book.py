@@ -24,8 +24,9 @@ class BookInfo:
         :return: 도서 정보 딕셔너리
         """
         data = ColumnsFromDB.get_db_data("*", "Book", "isbn13", isbn13)
-        #return json.dumps(data, indent=2, default=str, ensure_ascii=False)
-        return data
+        if not data:
+            return False
+        return json.dumps(data, indent=2, default=str, ensure_ascii=False)
 
 
     def get_author_to_info(name):
@@ -35,6 +36,8 @@ class BookInfo:
         :return: 도서 정보 딕셔너리
         """
         data = ColumnsFromDB.get_db_data("*", "Book", "author", name)
+        if not data:
+            return False
         return json.dumps(data, indent=2, default=str, ensure_ascii=False)
 
 
@@ -46,27 +49,33 @@ class BookInfo:
         """
         db = conn_mysqldb()
         cursor = db.cursor()
-        sql = """
-        SELECT Review.review 
-        FROM Review 
-        INNER JOIN Book 
-        ON Review.isbn13 = Book.isbn13
-        WHERE title 
-        LIKE %s
-        """
-        cursor.execute(sql, f"%{title}%")
-        book_info = cursor.fetchone()
-        if not book_info:
+        try:
+            sql = """
+            SELECT Review.review 
+            FROM Review 
+            INNER JOIN Book 
+            ON Review.isbn13 = Book.isbn13
+            WHERE title 
+            LIKE %s
+            """
+            cursor.execute(sql, f"%{title}%")
+            book_info = cursor.fetchone()
+            if not book_info:
+                return None
+            else:
+                return json.dumps(book_info, indent=2, default=str, ensure_ascii=False)
+        except:
             return None
-        else:
-            return json.dumps(book_info, indent=2, default=str, ensure_ascii=False)
 
 if __name__ == "__main__":
     # res = Book.get_title_to_review('달러구트')
-    #res = BookInfo.get_title_to_info('금각사')
+    res = BookInfo.get_title_to_info('달러구트 꿈 백화점')
     # res = get_title_to_info2('금각 사')
     res = BookInfo.get_author_to_info('파울로 코엘료')
     # res = BookInfo.get_isbn_to_info("9791165341909")
     # res = BookInfo.get_title_to_review('달러구트 꿈 백화점')
-    print(res)
+    # print(res)
     # print(len(res))
+
+    # res = BookInfo.get_title_to_info_style('부자들의 생각법')
+    print(res)
