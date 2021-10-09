@@ -477,7 +477,6 @@ def recommend_similar(bot_type,reqinfo):
         if bot_type == "kakao":
             #return KakaoText().send_response({"Answer": answer})
             return KakaoStyle.Style2(title, answer)
-        '''
         if bot_type == "naver":
             data = "RECOMMENDsimilar-" + reqinfo
             responseBody = {
