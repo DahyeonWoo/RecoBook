@@ -1,9 +1,12 @@
 import sys
+
+from sqlalchemy import engine
 sys.path.append("./project/flask/")
-from api.db_model.mysql import conn_mysqldb
+from api.db_model.mysql import conn_mysqldb, conn_sadb
 import pandas as pd
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
+from api.utils.ColumnsFromDB import ColumnsFromDB
 
 
 class NLPRecommend:
@@ -116,6 +119,25 @@ class NLPRecommend:
         except:
             return None
 
+    def random_recommend():
+        """
+        책 랜덤 추천
+        DB에서 bestRank가 0이 아닌 책의 COUNT를 뽑아서 random int 하나를 뽑고,
+        bestRank가 0이 아닌 책 중 해당 random int에 해당하는 책 리턴
+        """
+        import random
+        engine = conn_sadb()
+        with engine.connect() as connection:
+            result = connection.execute("SELECT COUNT(*) FROM Book WHERE bestRank != 0")
+            for row in result:
+                count = row[0]
+            idx = random.randint(1, count)
+            print(f"랜덤 인덱스: {idx}")
+        data = ColumnsFromDB.get_db_data('*', 'Book', 'idx', idx-1, random=True)
+        return data
+        
+
+
 def str_to_vector(str_vector):    
     str_vector=str_vector.replace('[','').replace(']','').split()
     list_vector = list(map(float, str_vector))
@@ -124,5 +146,6 @@ def str_to_vector(str_vector):
 
 if __name__ == '__main__':
     title = '7년의 밤'
-    print(NLPRecommend.recommend_by_title_using_reviews(title))
-    print(NLPRecommend.recommend_by_title_using_description(title))
+    # print(NLPRecommend.recommend_by_title_using_reviews(title))
+    # print(NLPRecommend.recommend_by_title_using_description(title))
+    print(NLPRecommend.random_recommend())
