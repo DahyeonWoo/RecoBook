@@ -1,12 +1,10 @@
 import sys
 import re
 import json
+from tqdm import tqdm
+from decouple import config
 sys.path.append("./project/flask/")
 sys.path.append("./project/flask/api/")
-import pandas as pd
-import gensim
-import numpy as py
-from konlpy.tag import Okt
 from api.db_model.mysql import conn_mysqldb
 from api.utils.ColumnsFromDB import *
 
@@ -44,9 +42,23 @@ class ModifyDB:
         print('refined_description.json 파일 저장 완료')
         return dict
 
+    def insert_value_into_db(self):
+        sql = "SELECT isbn13 From Book"
+        storage_url = config('NCP_URL') 
+        self.cursor.execute(sql)
+        isbn = self.cursor.fetchall()
+        for i in tqdm(isbn):
+            url = f"{storage_url}{i[0]}.jpg"
+            sql = f"UPDATE Book SET resizedCover = '{url}'  WHERE isbn13 = '{i[0]}'"
+            self.cursor.execute(sql)
+            self.conn.commit()
+        print('resizedCover 컬럼 업데이트 완료')
+
+
 if __name__ == '__main__':
-    raw_description = ModifyDB().get_db_data('description')
-    print(len(raw_description))
-    refined_description = ModifyDB().refine_description(raw_description)
-    print(len(refined_description))
-    ModifyDB().save_to_json(refined_description)
+    # raw_description = ModifyDB().get_db_data('description')
+    # print(len(raw_description))
+    # refined_description = ModifyDB().refine_description(raw_description)
+    # print(len(refined_description))
+    # ModifyDB().save_to_json(refined_description)
+    ModifyDB().insert_value_into_db()
