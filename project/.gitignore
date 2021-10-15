@@ -3,3 +3,4 @@ mongodb.py
 settings.ini
 __pycache__
 *.pyc
+images
