@@ -340,10 +340,14 @@ def get_book_info(bot_type,reqinfo):
             elif bot_type == "naver":
                 title = body["userInfo"]["entities"][naver_title_entity]
             result = BookInfo.get_title_to_info(title)
+            
             if not result:
                 answer = "해당 책이 레꼬북에 없는 것 같네."
             else:
-                answer = "책 제목으로 검색했을 때의 결과야.\n" + result
+                #answer = "책 제목으로 검색했을 때의 결과야.\n" + result
+                return KakaoStyle.Style1(result["title"], result["resizedCover"], result["description"],
+                                    result["author"], result["publisher"], result["priceStandard"], result["link"])
+
         elif reqinfo == "isbn13-info":
             if bot_type == "kakao":
                 isbn = body["action"]["detailParams"]["isbn13"]["value"]
@@ -353,7 +357,10 @@ def get_book_info(bot_type,reqinfo):
             if not result:
                 answer = "해당 책이 레꼬북에 없는 것 같네."
             else:
-                answer = "책 ISBN 번호로 검색했을 때의 결과야.\n" + result
+                #answer = "책 ISBN 번호로 검색했을 때의 결과야.\n" + result
+                return KakaoStyle.Style1(result["title"], result["resizedCover"], result["description"],
+                                    result["author"], result["publisher"], result["priceStandard"], result["link"])
+
         elif reqinfo == "author-info":
             if bot_type == "kakao":
                 author = body["action"]["detailParams"]["author"]["value"]
@@ -364,6 +371,8 @@ def get_book_info(bot_type,reqinfo):
                 answer = "해당 작가가 레꼬북에 없는 것 같네."
             else:
                 answer = "작가 정보로 검색했을 때의 결과야.\n" + result
+                return KakaoStyle.Style3(author, result)
+                
         elif reqinfo == "title-review":
             if bot_type == "kakao":
                 title = body["action"]["detailParams"]["title"]["value"]
@@ -377,12 +386,8 @@ def get_book_info(bot_type,reqinfo):
         else:
             answer = "레꼬북에 없는 기능이야. 계속 개발중이니까, 더 많은 기능을 기대해줘!"
 
-        if bot_type == "kakao":
-            #return KakaoText().send_response({"Answer": answer})
-            return KakaoStyle.Style1(result["title"], result["cover"], result["description"],
-                                    result["author"], result["publisher"], result["priceStandard"], result["link"])
-
-        elif bot_type == "naver":
+        
+        if bot_type == "naver":
             data = "GET" + reqinfo
             responseBody = {
                 data: [

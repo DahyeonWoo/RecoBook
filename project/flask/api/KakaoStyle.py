@@ -432,13 +432,13 @@ class KakaoStyle:
         return frame
 
 if __name__=='__main__':
-    #res = KakaoStyle.Style1('a','b','c','d')
+    res = KakaoStyle.Style1('a','b','c','d','e', 'f', 'g')
     list = ['부자들의 생각법', '구운몽', '종의 기원', '종의 기원', '종의 기원']
     # res = KakaoStyle.Style2('부자들의 생각법', list)
     data = {1: {'name': '불안한 사람들', 'count': 18}, 2: {'name': '7년의 밤', 'count': 9}, 3: {'name': '종의 기원', 'count': 7}}
     #res = KakaoStyle.ElasticCarousel('읽은 책', list)
     
-    res = KakaoStyle.ElasticCarousel2('읽은 책', data, 3, '읽음')
+    #res = KakaoStyle.ElasticCarousel2('읽은 책', data, 3, '읽음')
     print(res)
     
 
