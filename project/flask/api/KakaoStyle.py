@@ -83,7 +83,7 @@ class KakaoStyle:
                         "title": first,
                         #author
                         "description": BookInfo.get_title_to_info(first)['author'],
-                        "imageUrl": BookInfo.get_title_to_info(first)['cover'],
+                        "imageUrl": BookInfo.get_title_to_info(first)['resizedCover'],
                         "link": {
                             "web": BookInfo.get_title_to_info(first)['link']
                             }
@@ -92,7 +92,7 @@ class KakaoStyle:
                         "title": second,
                         #author
                         "description": BookInfo.get_title_to_info(second)['author'],
-                        "imageUrl": BookInfo.get_title_to_info(second)['cover'],
+                        "imageUrl": BookInfo.get_title_to_info(second)['resizedCover'],
                         "link": {
                             "web": BookInfo.get_title_to_info(second)['link']
                             }
@@ -101,7 +101,7 @@ class KakaoStyle:
                         "title": third,
                         #author
                         "description": BookInfo.get_title_to_info(third)['author'],
-                        "imageUrl": BookInfo.get_title_to_info(third)['cover'],
+                        "imageUrl": BookInfo.get_title_to_info(third)['resizedCover'],
                         "link": {
                             "web": BookInfo.get_title_to_info(third)['link']
                             }
@@ -110,7 +110,7 @@ class KakaoStyle:
                         "title": fourth,
                         #author
                         "description": BookInfo.get_title_to_info(fourth)['author'],
-                        "imageUrl": BookInfo.get_title_to_info(fourth)['cover'],
+                        "imageUrl": BookInfo.get_title_to_info(fourth)['resizedCover'],
                         "link": {
                             "web": BookInfo.get_title_to_info(fourth)['link']
                             }
@@ -119,7 +119,7 @@ class KakaoStyle:
                         "title": fifth,
                         #author
                         "description": BookInfo.get_title_to_info(fifth)['author'],
-                        "imageUrl": BookInfo.get_title_to_info(fifth)['cover'],
+                        "imageUrl": BookInfo.get_title_to_info(fifth)['resizedCover'],
                         "link": {
                             "web": BookInfo.get_title_to_info(fifth)['link']
                             }
@@ -212,7 +212,7 @@ class KakaoStyle:
                         "title": BookInfo.get_title_to_info(first)['title'],
                         "description": BookInfo.get_title_to_info(first)['author'],
                         "thumbnail": {
-                            "imageUrl": BookInfo.get_title_to_info(first)['cover']
+                            "imageUrl": BookInfo.get_title_to_info(first)['resizedCover']
                         },
                         "buttons": [
                             {
@@ -226,7 +226,7 @@ class KakaoStyle:
                         "title": BookInfo.get_title_to_info(second)['title'],
                         "description": BookInfo.get_title_to_info(second)['author'],
                         "thumbnail": {
-                            "imageUrl": BookInfo.get_title_to_info(second)['cover']
+                            "imageUrl": BookInfo.get_title_to_info(second)['resizedCover']
                         },
                         "buttons": [
                             {
@@ -240,7 +240,7 @@ class KakaoStyle:
                         "title": BookInfo.get_title_to_info(third)['title'],
                         "description": BookInfo.get_title_to_info(third)['author'],
                         "thumbnail": {
-                            "imageUrl": BookInfo.get_title_to_info(third)['cover']
+                            "imageUrl": BookInfo.get_title_to_info(third)['resizedCover']
                         },
                         "buttons": [
                             {
@@ -255,7 +255,7 @@ class KakaoStyle:
                         "title": BookInfo.get_title_to_info(fourth)['title'],
                         "description": BookInfo.get_title_to_info(fourth)['author'],
                         "thumbnail": {
-                            "imageUrl": BookInfo.get_title_to_info(fourth)['cover']
+                            "imageUrl": BookInfo.get_title_to_info(fourth)['resizedCover']
                         },
                         "buttons": [
                             {
@@ -270,7 +270,7 @@ class KakaoStyle:
                         "title": BookInfo.get_title_to_info(fifth)['title'],
                         "description": BookInfo.get_title_to_info(fifth)['author'],
                         "thumbnail": {
-                            "imageUrl": BookInfo.get_title_to_info(fifth)['cover']
+                            "imageUrl": BookInfo.get_title_to_info(fifth)['resizedCover']
                         },
                         "buttons": [
                             {
@@ -292,7 +292,7 @@ class KakaoStyle:
             "title": BookInfo.get_title_to_info(title)['title'],
             "description": BookInfo.get_title_to_info(title)['author'],
             "thumbnail": {
-                "imageUrl": BookInfo.get_title_to_info(title)['cover']
+                "imageUrl": BookInfo.get_title_to_info(title)['resizedCover']
             },
             "buttons": [
                 {
@@ -309,7 +309,7 @@ class KakaoStyle:
             "title": BookInfo.get_title_to_info(title)['title'],
             "description": str(howManyRead) + " 명 " + verb,
             "thumbnail": {
-                "imageUrl": BookInfo.get_title_to_info(title)['cover']
+                "imageUrl": BookInfo.get_title_to_info(title)['resizedCover']
             },
             "buttons": [
                 {
