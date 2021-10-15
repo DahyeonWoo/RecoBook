@@ -40,6 +40,15 @@ class BookInfo:
             return False
         return json.dumps(data, indent=2, default=str, ensure_ascii=False)
 
+    def get_author_info(name):
+        """
+        도서 작가를 검색하면 db에서 해당 작가의 정보를 조회
+        :param name: 도서 작가
+        :return: 도서 작가 정보
+        """
+        data = ColumnsFromDB.get_db_data("*", "AuthorOrigin", "name", name)
+        return data['description']
+
 
     def get_title_to_review(title):
         """
@@ -69,13 +78,13 @@ class BookInfo:
 
 if __name__ == "__main__":
     # res = Book.get_title_to_review('달러구트')
-    res = BookInfo.get_title_to_info('달러구트 꿈 백화점')
+    # res = BookInfo.get_title_to_info('달러구트 꿈 백화점')
     # res = get_title_to_info2('금각 사')
-    res = BookInfo.get_author_to_info('파울로 코엘료')
+    # res = BookInfo.get_author_to_info('파울로 코엘료')
     # res = BookInfo.get_isbn_to_info("9791165341909")
     # res = BookInfo.get_title_to_review('달러구트 꿈 백화점')
     # print(res)
     # print(len(res))
-
+    res = BookInfo.get_author_info('파울로 코엘료')
     # res = BookInfo.get_title_to_info_style('부자들의 생각법')
     print(res)

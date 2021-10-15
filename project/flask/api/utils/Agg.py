@@ -50,13 +50,17 @@ def get_topn(select_col, table_name, n):
     for i in range(1, len(top_n)+1):
         dict_value = {'name': top_n[i-1][0], 'count': top_n[i-1][1]}
         d.add(i, dict_value)
-    return json.dumps(d, indent=2, ensure_ascii=False)
+    #return json.dumps(d, indent=2, ensure_ascii=False)
+    return d
 
     
 
 
 if __name__ == "__main__":
-    print(get_topn("bookRead", "User", 3))
-    print(get_topn("bookWant", "User", 3))
-    print(get_topn("interestAuthor", "User", 3))
-    print(get_topn("interestCategory", "User", 3))
+    #print(get_topn("bookRead", "User", 3))
+    #print(get_topn("bookWant", "User", 3))
+    #print(get_topn("interestAuthor", "User", 3))
+    #print(get_topn("interestCategory", "User", 3))
+    res = get_topn("bookRead", "User", 3)
+    for r in res:
+        print('k')

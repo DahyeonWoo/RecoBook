@@ -43,13 +43,14 @@ class ColumnsFromDB:
         return total_col_list
 
     @staticmethod
-    def get_db_data(db_col, table_name, col, param):
+    def get_db_data(db_col, table_name, col, param, random=False):
         """
         지정한 컬럼에 관한 정보를 불러오는 함수
         :params db_col: 조회할 컬럼명
         :params table_name: 테이블명
         :params col: 조건 컬럼명
         :params param: 조건문에 들어갈 이름
+        :params random: 랜덤 추천 여부
 
         :return: 리스트
         """
@@ -57,7 +58,10 @@ class ColumnsFromDB:
         db_cursor = mysql_db.cursor()
         try:
             if col == 'idx':
-                sql = f"SELECT {db_col} FROM {table_name} WHERE {col} = '{param}'"
+                if random:
+                    sql = f"SELECT {db_col} FROM {table_name} WHERE bestRank != 0 LIMIT {param}, 1"
+                else:
+                    sql = f"SELECT {db_col} FROM {table_name} WHERE {col} = '{param}'"
             else:
                 sql = f"SELECT {db_col} FROM {table_name} WHERE {col} LIKE '%{param}%'"
             db_cursor.execute(sql)
@@ -77,7 +81,8 @@ class ColumnsFromDB:
                     else:
                         print("부적절한 col, 문법 체크")
             return dict
-        except:
+        except Exception as e:
+            print(e)
             return None
 
     @staticmethod
