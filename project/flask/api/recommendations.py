@@ -2,8 +2,6 @@ from db_model.mysql import conn_mysqldb
 import pandas as pd
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
-<<<<<<< Updated upstream
-=======
 from api.utils.ColumnsFromDB import ColumnsFromDB
 from numpy import dot
 from numpy.linalg import norm
@@ -225,7 +223,6 @@ class NLPRecommend:
         data = ColumnsFromDB.get_db_data('*', 'Book', 'idx', idx-1, random=True)
         return data
         
->>>>>>> Stashed changes
 
 
 #작가 기반 추천
