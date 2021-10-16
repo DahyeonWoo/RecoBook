@@ -42,83 +42,80 @@ def get_user_info_all(idx):
 @app.route("/<bot_type>/user/get/<reqinfo>", methods=["POST"])
 def get_user_info(bot_type,reqinfo):
     body = request.get_json()
-    try:
-        if bot_type == "kakao":
-            idx = body["userRequest"]["user"]["id"]
-        elif bot_type == "naver":
-            idx = body["userInfo"]["id"]
-        else:
-            abort(404)
-    
-        isUser = UserInfo.get_is_user(idx)
+    if bot_type == "kakao":
+        idx = body["userRequest"]["user"]["id"]
+    elif bot_type == "naver":
+        idx = body["userInfo"]["id"]
+    else:
+        abort(404)
 
-        if isUser != None:
-            userinfo = UserInfo.get_user_info(idx)
-            result = json.loads(userinfo)
-            # 유저 정보
-            bookRead = result["bookRead"]
-            bookWant = result['bookWant']
-            interestBook = result["interestBook"]
-            interestAuthor = result["interestAuthor"]
-            interestCategory = result["interestCategory"]
+    isUser = UserInfo.get_is_user(idx)
+    print(isUser)
 
-            if reqinfo == "bookRead":
-                if bookRead != None and len(bookRead) != 0:
-                    answer = "지금까지 <"+bookRead+">를 읽었네. 좋아!"
-                    return KakaoStyle.ElasticCarousel("읽은 책", bookRead)
-                else:
-                    answer = "우선 읽은 책을 등록해줘"
-            elif reqinfo == "bookWant":
-                if bookWant != None and len(bookWant) != 0:
-                    answer = "읽고 싶은 책 목록은 <"+bookWant+">야."
-                    return KakaoStyle.ElasticCarousel("읽고 싶은 책", bookWant)
-                else:
-                    answer = "우선 읽고 싶은 책을 등록해줘"
-            elif reqinfo == "interestBook":
-                if interestBook != None and len(interestBook) != 0:
-                    answer = "관심 있는 책 목록은 <"+interestBook+">야."
-                    return KakaoStyle.ElasticCarousel("관심 있는 책", interestBook)
-                else:
-                    answer = "우선 관심 책을 등록해줘"
+    if isUser != None:
+        userinfo = UserInfo.get_user_info(idx)
+        result = json.loads(userinfo)
+        # 유저 정보
+        bookRead = result["bookRead"]
+        bookWant = result['bookWant']
+        interestBook = result["interestBook"]
+        interestAuthor = result["interestAuthor"]
+        interestCategory = result["interestCategory"]
 
-            elif reqinfo == "interestAuthor":
-                if interestAuthor != None and len(interestAuthor) != 0:
-                    answer = "관심 있는 작가 목록은 <"+interestAuthor+">야."
-                    return KakaoStyle.ElasticList("관심 있는 작가", interestAuthor)
-                else:
-                    answer = "우선 관심 작가를 등록해줘"
-            elif reqinfo == "interestCategory":
-                if interestCategory != None and len(interestCategory) != 0:
-                    answer = "관심 장르 목록은 <"+interestCategory+">야."
-                    return KakaoText().send_response({"Answer": answer})
-                else:
-                    answer = "우선 관심 장르를 등록해줘"
+        if reqinfo == "bookRead":
+            if bookRead != None and len(bookRead) != 0:
+                answer = "지금까지 <"+bookRead+">를 읽었네. 좋아!"
+                return KakaoStyle.ElasticCarousel("읽은 책", bookRead)
             else:
-                answer = "레꼬북에 없는 기능이야. 계속 개발중이니까, 더 많은 기능을 기대해줘!"
-        else:
-            UserInfo.insert_user_idx(idx)
-            answer = "확장 기능을 사용하려면 유저 등록을 해야해. 유저 등록이 완료됐으니 기능을 다시 실행해줄래? 민감한 개인정보는 사용하지 않으니 걱정마!"
-        '''
-        if bot_type == "kakao":
-            return KakaoText().send_response({"Answer": answer})
-        '''
-        if bot_type == "naver":
-            data = "GET"+reqinfo
-            responseBody = {
-                data: [
-                    {
-                        "name": "answer",
-                        "value": answer
-                    }
-                ]
-            }
-            return responseBody
+                answer = "우선 읽은 책을 등록해줘"
+        elif reqinfo == "bookWant":
+            if bookWant != None and len(bookWant) != 0:
+                answer = "읽고 싶은 책 목록은 <"+bookWant+">야."
+                return KakaoStyle.ElasticCarousel("읽고 싶은 책", bookWant)
+            else:
+                answer = "우선 읽고 싶은 책을 등록해줘"
+        elif reqinfo == "interestBook":
+            if interestBook != None and len(interestBook) != 0:
+                answer = "관심 있는 책 목록은 <"+interestBook+">야."
+                return KakaoStyle.ElasticCarousel("관심 있는 책", interestBook)
+            else:
+                answer = "우선 관심 책을 등록해줘"
 
+        elif reqinfo == "interestAuthor":
+            if interestAuthor != None and len(interestAuthor) != 0:
+                answer = "관심 있는 작가 목록은 <"+interestAuthor+">야."
+                return KakaoStyle.ElasticList("관심 있는 작가", interestAuthor)
+            else:
+                answer = "우선 관심 작가를 등록해줘"
+        elif reqinfo == "interestCategory":
+            if interestCategory != None and len(interestCategory) != 0:
+                answer = "관심 장르 목록은 <"+interestCategory+">야."
+                return KakaoText().send_response({"Answer": answer})
+            else:
+                answer = "우선 관심 장르를 등록해줘"
         else:
-            abort(404)
-    except Exception as ex:
-        abort(500)
-        print(Exception)
+            answer = "레꼬북에 없는 기능이야. 계속 개발중이니까, 더 많은 기능을 기대해줘!"
+    else:
+        UserInfo.insert_user_idx(idx)
+        answer = "확장 기능을 사용하려면 유저 등록을 해야해. 유저 등록이 완료됐으니 기능을 다시 실행해줄래? 민감한 개인정보는 사용하지 않으니 걱정마!"
+    '''
+    if bot_type == "kakao":
+        return KakaoText().send_response({"Answer": answer})
+    '''
+    if bot_type == "naver":
+        data = "GET"+reqinfo
+        responseBody = {
+            data: [
+                {
+                    "name": "answer",
+                    "value": answer
+                }
+            ]
+        }
+        return responseBody
+
+    else:
+        abort(404)
 
 # 유저 정보 추가
 @app.route("/<bot_type>/user/insert/<reqinfo>", methods=["POST"])
@@ -532,52 +529,89 @@ def recommend_similar(bot_type,reqinfo):
 @app.route("/<bot_type>/recommend/<reqinfo>/user", methods=['POST'])
 def recommend_user(bot_type,reqinfo):
     body = request.get_json()
-    try:
-        if bot_type == "kakao":
-            idx = body["userRequest"]["user"]["id"]
-        elif bot_type == "naver":
-            idx = body["userInfo"]["id"]
-        else:
-            abort(404)
+    if bot_type == "kakao":
+        idx = body["userRequest"]["user"]["id"]
+    elif bot_type == "naver":
+        idx = body["userInfo"]["id"]
+    else:
+        abort(404)
 
-        isUser = UserInfo.get_is_user(idx)
-        if isUser != None:
-            if reqinfo == "title":
-                if bot_type == "kakao":
-                    title = body["action"]["detailParams"]["title"]["value"]
-                elif bot_type == "naver":
-                    title = body["userInfo"]["entities"][naver_title_entity]
-                # answer = NLPRecommend.recommend_user_by_title(idx, title)
-                answer = "기능 추가중이야"
-            elif reqinfo == "author":
-                if bot_type == "kakao":
-                    author = body["action"]["detailParams"]["author"]["value"]
-                elif bot_type == "naver":
-                    author = body["userInfo"]["entities"][naver_author_entity]
-                # answer = NLPRecommend.recommend_user_by_author(idx, author)
-                answer = "기능 추가중이야"
-        else:
-            UserInfo.insert_user_idx(idx)
-            answer = "확장 기능을 사용하려면 유저 등록을 해야해. 유저 등록이 완료됐으니 기능을 다시 실행해줄래? 민감한 개인정보는 사용하지 않으니 걱정마!"
+    isUser = UserInfo.get_is_user(idx)
+    if isUser != None:
+        if reqinfo == "title":
+            if bot_type == "kakao":
+                title = body["action"]["detailParams"]["title"]["value"]
+            elif bot_type == "naver":
+                title = body["userInfo"]["entities"][naver_title_entity]
+            # answer = NLPRecommend.recommend_user_by_title(idx, title)
+            answer = "기능 추가중이야"
+        elif reqinfo == "author":
+            if bot_type == "kakao":
+                author = body["action"]["detailParams"]["author"]["value"]
+            elif bot_type == "naver":
+                author = body["userInfo"]["entities"][naver_author_entity]
+            # answer = NLPRecommend.recommend_user_by_author(idx, author)
+            answer = "기능 추가중이야"
+    else:
+        UserInfo.insert_user_idx(idx)
+        answer = "확장 기능을 사용하려면 유저 등록을 해야해. 유저 등록이 완료됐으니 기능을 다시 실행해줄래? 민감한 개인정보는 사용하지 않으니 걱정마!"
 
-        if bot_type == "kakao":
-            return KakaoText().send_response({"Answer": answer})
-        elif bot_type == "naver":
-            data = "RECOMMENDsimilar-" + reqinfo
-            responseBody = {
-                data: [
-                    {
-                        "name": "answer",
-                        "value": answer
-                    }
-                ]
-            }
-            return responseBody
-        else:
-            abort(404)
-    except Exception as ex:
-        abort(500)
-        print(Exception)
+    if bot_type == "kakao":
+        return KakaoText().send_response({"Answer": answer})
+    elif bot_type == "naver":
+        data = "RECOMMENDsimilar-" + reqinfo
+        responseBody = {
+            data: [
+                {
+                    "name": "answer",
+                    "value": answer
+                }
+            ]
+        }
+        return responseBody
+    else:
+        abort(404)
+
+# 랜덤 추천
+@app.route("/<bot_type>/recommend/random", methods=['POST'])
+def recommend_random(bot_type):
+    body = request.get_json()
+    print(body)
+    if bot_type == "kakao":
+        idx = body["userRequest"]["user"]["id"]
+    elif bot_type == "naver":
+        idx = body["userInfo"]["id"]
+    else:
+        abort(404)
+    isUser = UserInfo.get_is_user(idx)
+    if isUser != None:
+        result = NLPRecommend.random_recommend()
+    else:
+        UserInfo.insert_user_idx(idx)
+        answer = "확장 기능을 사용하려면 유저 등록을 해야해. 유저 등록이 완료됐으니 기능을 다시 실행해줄래? 민감한 개인정보는 사용하지 않으니 걱정마!"
+    if bot_type == "kakao":
+        return KakaoStyle.Style1(
+            result["title"],
+            result["resizedCover"],
+            result["description"],
+            result["author"],
+            result["publisher"],
+            result["priceStandard"],
+            result["link"]
+            )
+    # elif bot_type == "naver":
+    #     data = "RECOMMENDsimilar-" + reqinfo
+    #     responseBody = {
+    #         data: [
+    #             {
+    #                 "name": "answer",
+    #                 "value": answer
+    #             }
+    #         ]
+    #     }
+    #     return responseBody
+    else:
+        abort(404)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001)
