@@ -477,53 +477,57 @@ def get_book_info_top(bot_type,reqinfo):
 @app.route("/<bot_type>/recommend/<reqinfo>/similar", methods=['POST'])
 def recommend_similar(bot_type,reqinfo):
     body = request.get_json()
-    try:
-        if reqinfo == "title":
-            if bot_type == "kakao":
-                title = body["action"]["detailParams"]["title"]["value"]
-                answer = NLPRecommend.recommend_by_title_using_reviews(title)
-                return KakaoStyle.Carousel(title, answer)
-
-            elif bot_type == "naver":
-                title = body["userInfo"]["entities"][naver_title_entity]
-            answer = NLPRecommend.recommend_by_title_using_reviews(title)
-            if not answer:
-                answer = NLPRecommend.recommend_by_title_using_description(title)
-            if not answer:
-                answer = "해당 책이 레꼬북에 등록되어 있지 않아."
-
-        elif reqinfo == "author":
-            if bot_type == "kakao":
-                author = body["action"]["detailParams"]["author"]["value"]
-                answer = NLPRecommend.recommend_by_author(author)
-                return KakaoStyle.Style3(author, answer)
-
-            elif bot_type == "naver":
-                author = body["userInfo"]["entities"][naver_author_entity]
-            answer = NLPRecommend.recommend_by_author(author)
-            if not answer:
-                answer = "해당 작가는 레꼬북에 등록되어 있지 않아."
-        '''
+    if reqinfo == "title":
         if bot_type == "kakao":
-            #return KakaoText().send_response({"Answer": answer})
-            return KakaoStyle.Style2(title, answer)
-        '''
-        if bot_type == "naver":
-            data = "RECOMMENDsimilar-" + reqinfo
-            responseBody = {
-                data: [
-                    {
-                        "name": "answer",
-                        "value": answer
-                    }
-                ]
-            }
-            return responseBody
-        else:
-            abort(404)
-    except Exception as ex:
-        abort(500)
-        print(Exception)
+            title = body["action"]["detailParams"]["title"]["value"]
+            answer = NLPRecommend.recommend_by_title_using_reviews(title)
+            return KakaoStyle.Carousel(title, answer)
+        elif bot_type == "naver":
+            title = body["userInfo"]["entities"][naver_title_entity]
+        answer = NLPRecommend.recommend_by_title_using_reviews(title)
+        if not answer:
+            answer = NLPRecommend.recommend_by_title_using_description(title)
+        if not answer:
+            answer = "해당 책이 레꼬북에 등록되어 있지 않아."
+
+    elif reqinfo == "author":
+        if bot_type == "kakao":
+            author = body["action"]["detailParams"]["author"]["value"]
+            answer = NLPRecommend.recommend_by_author(author)
+            return KakaoStyle.Style3(author, answer)
+
+        elif bot_type == "naver":
+            author = body["userInfo"]["entities"][naver_author_entity]
+        answer = NLPRecommend.recommend_by_author(author)
+        if not answer:
+            answer = "해당 작가는 레꼬북에 등록되어 있지 않아."
+
+    if reqinfo == "genre":
+        if bot_type == "kakao":
+            genre = body["action"]["detailParams"]["genre"]["value"]
+            top_five = NLPRecommend.recommend_by_keyword_using_reviews(genre)
+            answer = KakaoStyle.Carousel2(top_five, keyword=genre)
+
+        elif bot_type == "naver":
+            genre = body["userInfo"]["entities"][naver_title_entity]
+            answer = NLPRecommend.recommend_by_keyword_using_reviews(genre)
+
+    if bot_type == "kakao":
+        return answer
+    
+    if bot_type == "naver":
+        data = "RECOMMENDsimilar-" + reqinfo
+        responseBody = {
+            data: [
+                {
+                    "name": "answer",
+                    "value": answer
+                }
+            ]
+        }
+        return responseBody
+    else:
+        abort(404)
 
 # 벡터 평균값 추천, 유저 기반 도서/작가
 @app.route("/<bot_type>/recommend/<reqinfo>/user", methods=['POST'])
@@ -551,7 +555,7 @@ def recommend_user(bot_type,reqinfo):
         return KakaoText().send_response({"Answer": answer})
 
     if bot_type == "kakao":
-        return KakaoStyle.Style4(topFive=answer)
+        return KakaoStyle.Carousel2(topFive=answer)
     elif bot_type == "naver":
         data = "RECOMMENDsimilar-" + reqinfo
         responseBody = {

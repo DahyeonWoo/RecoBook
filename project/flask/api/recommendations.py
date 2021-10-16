@@ -102,7 +102,7 @@ class NLPRecommend:
             df = pd.DataFrame(db_cursor.fetchall())
             df.columns = ['isbn','title','vector']
             Doc2Vec_list = list(df['vector'])
-            books = df[['title']]
+            # books = df[['title']]
             
             cos_sim_list=[]
             
@@ -113,13 +113,12 @@ class NLPRecommend:
             sim_scores = sorted(sim_scores, key = lambda x: x[1], reverse = True)
             sim_scores = sim_scores[:5]
             book_indices = [i[0] for i in sim_scores]
-            recommend = books.iloc[book_indices].reset_index(drop=True)
             return_list = []
 
             for i in book_indices:
-                return_list.append(books.loc[i]['title'])    
+                return_list.append(df.loc[i]['isbn'])    
 
-            return '\n'.join(return_list)
+            return return_list
         except :
             return None
 

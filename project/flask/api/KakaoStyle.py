@@ -193,80 +193,6 @@ class KakaoStyle:
         }
         return responseBody
 
-    # 리스트카드 (유저 기반 책 추천)
-    @staticmethod
-    def Style4(topFive):
-
-        first = json.loads(BookInfo.get_isbn_to_info(topFive[0]))
-        print(first)
-        second = json.loads(BookInfo.get_isbn_to_info(topFive[1]))
-        third = json.loads(BookInfo.get_isbn_to_info(topFive[2]))
-        fourth = json.loads(BookInfo.get_isbn_to_info(topFive[3]))
-        fifth = json.loads(BookInfo.get_isbn_to_info(topFive[4]))
-        
-        responseBody = {
-            "version": "2.0",
-            "template": {
-                "outputs": [
-                {
-                    "listCard": {
-                    "header": {
-                        "title": '좋아할만한 책'
-                    },
-                    "items": [
-                        {
-                        "title": first['title'],
-                        #author
-                        "description": first['author'],
-                        "imageUrl": first['resizedCover'],
-                        "link": {
-                            "web": first['link']
-                            }
-                        },
-                        {
-                        "title": second['title'],
-                        #author
-                        "description": second['description'],
-                        "imageUrl": second['resizedCover'],
-                        "link": {
-                            "web": second['link']
-                            }
-                        },
-                        {
-                        "title": third['description'],
-                        #author
-                        "description": third['author'],
-                        "imageUrl": third['resizedCover'],
-                        "link": {
-                            "web": third['link']
-                            }
-                        },
-                        {
-                        "title": fourth['title'],
-                        #author
-                        "description": fourth['author'],
-                        "imageUrl": fourth['resizedCover'],
-                        "link": {
-                            "web": fourth['link']
-                            }
-                        },
-                        {
-                        "title": fifth['title'],
-                        #author
-                        "description": fifth['author'],
-                        "imageUrl": fifth['resizedCover'],
-                        "link": {
-                            "web": fifth['link']
-                            }
-                        }
-                    ]
-                    }
-                }
-                ]
-            }
-
-        }
-        return responseBody
 
     # 캐로셀 (basicCard)
     @staticmethod
@@ -368,6 +294,109 @@ class KakaoStyle:
                 ]
             }
 }
+    # 캐로셀 (유저 기반 책 추천)
+    @staticmethod
+    def Carousel2(topFive, keyword=''):
+
+        first = json.loads(BookInfo.get_isbn_to_info(topFive[0]))
+        print(first)
+        second = json.loads(BookInfo.get_isbn_to_info(topFive[1]))
+        third = json.loads(BookInfo.get_isbn_to_info(topFive[2]))
+        fourth = json.loads(BookInfo.get_isbn_to_info(topFive[3]))
+        fifth = json.loads(BookInfo.get_isbn_to_info(topFive[4]))
+        
+        responseBody = {
+            "version": "2.0",
+            "template": {
+                "outputs": [
+                    {
+                        "simpleText": {
+                        "text": keyword + " 좋아할만한 책"
+                    }
+                    },
+                {
+                    "carousel": {
+                    "type": "basicCard",
+                    "items": [
+                        {
+                        "title": first['title'],
+                        "description": first['author'],
+                        "thumbnail": {
+                            "imageUrl": first['resizedCover']
+                        },
+                        "buttons": [
+                            {
+                            "action":  "webLink",
+                            "label": "상세보기",
+                            "webLinkUrl": first['link']
+                            }
+                        ]
+                        },
+                        {
+                        "title": second['title'],
+                        "description": second['author'],
+                        "thumbnail": {
+                            "imageUrl": second['resizedCover']
+                        },
+                        "buttons": [
+                            {
+                            "action":  "webLink",
+                            "label": "상세보기",
+                            "webLinkUrl": second['link']
+                            }
+                        ]
+                        },
+                        {
+                        "title": third['title'],
+                        "description": third['author'],
+                        "thumbnail": {
+                            "imageUrl": third['resizedCover']
+                        },
+                        "buttons": [
+                            {
+                            "action":  "webLink",
+                            "label": "상세보기",
+                            "webLinkUrl": third['link']
+                            }
+                        ]
+                        },
+
+                        {
+                        "title": fourth['title'],
+                        "description": fourth['author'],
+                        "thumbnail": {
+                            "imageUrl": fourth['resizedCover']
+                        },
+                        "buttons": [
+                            {
+                            "action":  "webLink",
+                            "label": "상세보기",
+                            "webLinkUrl": fourth['link']
+                            }
+                        ]
+                        },
+
+                        {
+                        "title": fifth['title'],
+                        "description": fifth['author'],
+                        "thumbnail": {
+                            "imageUrl": fifth['resizedCover']
+                        },
+                        "buttons": [
+                            {
+                            "action":  "webLink",
+                            "label": "상세보기",
+                            "webLinkUrl": fifth['link']
+                            }
+                        ]
+                        }
+                    ]
+                    }
+                }
+                ]
+            }
+        }
+        return responseBody
 
     def oneItem_title(title):
         responseBody = {
