@@ -53,11 +53,11 @@ class NLPRecommend:
         db = conn_mysqldb()
         db_cursor = db.cursor()
         try:
-            sql = "SELECT title, vector FROM Review;"
+            sql = "SELECT isbn13, title, vector FROM Review;"
             db_cursor.execute(sql)
             result = db_cursor.fetchall()
 
-            book_df = pd.DataFrame(result,columns=['title','vector'])
+            book_df = pd.DataFrame(result,columns=['isbn','title','vector'])
             book_df['vector_']=book_df['vector'].apply(str_to_vector)
 
             embedding_list=list(book_df['vector_'])
@@ -82,10 +82,8 @@ class NLPRecommend:
             # 데이터프레임으로부터 순차적으로 이미지를 출력
             return_list=list()
             for i in book_indices:
-                return_list.append(books.loc[i]['title'])
-            titles = '\n'.join(return_list)
-
-            return titles
+                return_list.append(books.loc[i]['isbn'])
+            return return_list
         except:
             return None
 
@@ -99,10 +97,10 @@ class NLPRecommend:
             db_cursor.execute(sql)
             keyword_vector = db_cursor.fetchall()[0][0]
 
-            sql ="SELECT title, vector FROM Review;" 
+            sql ="SELECT isbn13, title, vector FROM Review;" 
             db_cursor.execute(sql)
             df = pd.DataFrame(db_cursor.fetchall())
-            df.columns = ['title','vector']
+            df.columns = ['isbn','title','vector']
             Doc2Vec_list = list(df['vector'])
             books = df[['title']]
             
@@ -131,28 +129,27 @@ class NLPRecommend:
         db_cursor = db.cursor()
 
         try:
-            sql = f"SELECT bookWant FROM User WHERE idx LIKE {user_idx};"
+            sql = f"SELECT bookWant FROM User WHERE idx = {user_idx};"
             db_cursor.execute(sql)
             result = db_cursor.fetchall()[0][0]
-            print(result)        
+            # print('bookWant:',result)        
 
             bookWantList = result.split(';')
             bookWantList = ['\''+bookWant.strip()+'\'' for bookWant in bookWantList]            
-            bookWantVector = []
-            sql = f"SELECT title,vector FROM Review WHERE title LIKE {' OR title LIKE '.join(bookWantList)};"
-            print(sql)
+            sql = f"SELECT isbn13,title,vector FROM Review WHERE title LIKE {' OR title LIKE '.join(bookWantList)};"
+            # print(sql)
             db_cursor.execute(sql)  
             result = db_cursor.fetchall()      
 
             df = pd.DataFrame(result)
-            df.columns = ['title','vector']
+            df.columns = ['isbn','title','vector']
             df['vector'] = df['vector'].apply(str_to_vector)
             mean_Vector = df['vector'].mean()
 
-            sql ="SELECT title, vector FROM Review;" 
+            sql ="SELECT isbn13,title, vector FROM Review;" 
             db_cursor.execute(sql)
             df = pd.DataFrame(db_cursor.fetchall())
-            df.columns = ['title','vector']
+            df.columns = ['isbn','title','vector']
             Doc2Vec_list = list(df['vector'])
 
 
@@ -169,9 +166,8 @@ class NLPRecommend:
             return_list = []
 
             for i in book_indices:
-                return_list.append(df.loc[i]['title'])    
-
-            return '\n'.join(return_list)
+                return_list.append(df.loc[i]['isbn'])    
+            return return_list
         except:
             return None
 
@@ -179,8 +175,9 @@ class NLPRecommend:
 
     def recommend_by_title_using_description(title):
         """
-        리스트 뷰가 아직 미완성됐으므로 일단 추천할 책의 제목만 반환함
-        리스트 뷰가 완성되면 형식에 맞게 변환해야함.
+        sentence-transformer를 사용한 description 유사도 기반 추천
+        params: title: 사용자가 입력한 책 제목
+        return: 5개 책 리스트
         """
         db = conn_mysqldb()
         db_cursor = db.cursor()
@@ -233,4 +230,5 @@ if __name__ == '__main__':
     title = '7년의 밤'
     # print(NLPRecommend.recommend_by_title_using_reviews(title))
     # print(NLPRecommend.recommend_by_title_using_description(title))
-    print(NLPRecommend.random_recommend())
+    # print(NLPRecommend.random_recommend())
+    print(NLPRecommend.recommend_by_user_using_review(3))

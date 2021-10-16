@@ -1,4 +1,4 @@
-
+import json
 from utils.ColumnsFromDB import ColumnsFromDB
 
 from book import BookInfo
@@ -62,13 +62,20 @@ class KakaoStyle:
 
     # 리스트카드 (책 제목과 유사한 책)
     @staticmethod
-    def Style2(title, topFive):
+    def Style2(title, topFive, review=False):
+        """
+        params: title: 스타일 제목
+        params: topFive: 5개 제목이 담긴 리스트
+        params: review: Review 테이블 사용 여부
+        """
         first = topFive[0]
         second = topFive[1]
         third = topFive[2]
         fourth = topFive[3]
         fifth = topFive[4]
-
+        
+        # for i in topFive:
+        title_text = title + ' 유사한 책'
         responseBody = {
             "version": "2.0",
             "template": {
@@ -76,7 +83,7 @@ class KakaoStyle:
                 {
                     "listCard": {
                     "header": {
-                        "title": title + " 유사한 책"
+                        "title": title_text
                     },
                     "items": [
                         {
@@ -176,6 +183,81 @@ class KakaoStyle:
                         "title": fifth,
                         #author
                         "description": BookInfo.get_title_to_info(fifth)
+                        }
+                    ]
+                    }
+                }
+                ]
+            }
+
+        }
+        return responseBody
+
+    # 리스트카드 (유저 기반 책 추천)
+    @staticmethod
+    def Style4(topFive):
+
+        first = json.loads(BookInfo.get_isbn_to_info(topFive[0]))
+        print(first)
+        second = json.loads(BookInfo.get_isbn_to_info(topFive[1]))
+        third = json.loads(BookInfo.get_isbn_to_info(topFive[2]))
+        fourth = json.loads(BookInfo.get_isbn_to_info(topFive[3]))
+        fifth = json.loads(BookInfo.get_isbn_to_info(topFive[4]))
+        
+        responseBody = {
+            "version": "2.0",
+            "template": {
+                "outputs": [
+                {
+                    "listCard": {
+                    "header": {
+                        "title": '좋아할만한 책'
+                    },
+                    "items": [
+                        {
+                        "title": first['title'],
+                        #author
+                        "description": first['author'],
+                        "imageUrl": first['resizedCover'],
+                        "link": {
+                            "web": first['link']
+                            }
+                        },
+                        {
+                        "title": second['title'],
+                        #author
+                        "description": second['description'],
+                        "imageUrl": second['resizedCover'],
+                        "link": {
+                            "web": second['link']
+                            }
+                        },
+                        {
+                        "title": third['description'],
+                        #author
+                        "description": third['author'],
+                        "imageUrl": third['resizedCover'],
+                        "link": {
+                            "web": third['link']
+                            }
+                        },
+                        {
+                        "title": fourth['title'],
+                        #author
+                        "description": fourth['author'],
+                        "imageUrl": fourth['resizedCover'],
+                        "link": {
+                            "web": fourth['link']
+                            }
+                        },
+                        {
+                        "title": fifth['title'],
+                        #author
+                        "description": fifth['author'],
+                        "imageUrl": fifth['resizedCover'],
+                        "link": {
+                            "web": fifth['link']
+                            }
                         }
                     ]
                     }

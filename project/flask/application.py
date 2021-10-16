@@ -539,25 +539,19 @@ def recommend_user(bot_type,reqinfo):
     isUser = UserInfo.get_is_user(idx)
     if isUser != None:
         if reqinfo == "title":
-            if bot_type == "kakao":
-                title = body["action"]["detailParams"]["title"]["value"]
-            elif bot_type == "naver":
-                title = body["userInfo"]["entities"][naver_title_entity]
-            # answer = NLPRecommend.recommend_user_by_title(idx, title)
-            answer = "기능 추가중이야"
+            answer = NLPRecommend.recommend_by_user_using_review(idx)
         elif reqinfo == "author":
-            if bot_type == "kakao":
-                author = body["action"]["detailParams"]["author"]["value"]
-            elif bot_type == "naver":
-                author = body["userInfo"]["entities"][naver_author_entity]
             # answer = NLPRecommend.recommend_user_by_author(idx, author)
             answer = "기능 추가중이야"
     else:
         UserInfo.insert_user_idx(idx)
         answer = "확장 기능을 사용하려면 유저 등록을 해야해. 유저 등록이 완료됐으니 기능을 다시 실행해줄래? 민감한 개인정보는 사용하지 않으니 걱정마!"
+    if not answer:
+        answer = '등록된 관심 책이 없어. 먼저 관심책을 등록해보자!\n예) OOO 관심책 등록해줘'
+        return KakaoText().send_response({"Answer": answer})
 
     if bot_type == "kakao":
-        return KakaoText().send_response({"Answer": answer})
+        return KakaoStyle.Style4(topFive=answer)
     elif bot_type == "naver":
         data = "RECOMMENDsimilar-" + reqinfo
         responseBody = {
