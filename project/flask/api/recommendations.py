@@ -128,13 +128,16 @@ class NLPRecommend:
         db_cursor = db.cursor()
 
         try:
-            sql = f"SELECT bookWant FROM User WHERE idx = {user_idx};"
+            sql = f"SELECT bookWant, bookRead FROM User WHERE idx = {user_idx};"
             db_cursor.execute(sql)
             result = db_cursor.fetchall()[0][0]
             # print('bookWant:',result)        
 
-            bookWantList = result.split(';')
-            bookWantList = ['\''+bookWant.strip()+'\'' for bookWant in bookWantList]            
+            bookWantList = []
+            for book in result:
+                bookWantList.extend(book.split(';'))
+
+            bookWantList = list(set(['\''+bookWant.strip()+'\'' for bookWant in bookWantList]))          
             sql = f"SELECT isbn13,title,vector FROM Review WHERE title LIKE {' OR title LIKE '.join(bookWantList)};"
             # print(sql)
             db_cursor.execute(sql)  
