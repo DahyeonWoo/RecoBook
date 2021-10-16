@@ -1,7 +1,9 @@
+import sys
+sys.path.append("./project/flask/")
+sys.path.append("./project/flask/api")
+from api.utils.ColumnsFromDB import ColumnsFromDB
 
-from utils.ColumnsFromDB import ColumnsFromDB
-
-from book import BookInfo
+from api.book import BookInfo
 
 class KakaoStyle:
 
