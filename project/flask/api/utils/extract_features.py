@@ -27,7 +27,26 @@ def save_to_csv(path, data, name):
     df.to_csv(path + f"{name}.csv", index=False)
     return df
 
+def compare_db():
+    conn = conn_mysqldb()
+    cursor = conn.cursor()
+    sql = "SELECT isbn13 FROM Book;"
+    cursor.execute(sql)
+    book_info = [int(x[0]) for x in cursor.fetchall()]
+    sql = 'SELECT isbn13 FROM Review'
+    cursor.execute(sql)
+    review_info = [x[0] for x in cursor.fetchall()]
+    cursor.close()
+    conn.close()
+    
+    not_exist = []
+    for isbn in review_info:
+        if isbn not in book_info:
+            not_exist.append(isbn)
+    print('length of not exist:', len(not_exist))
+    return not_exist
 if __name__ == "__main__":
-    info = extract_book_info()
-    path = './project/CrawlingData/'
-    save_to_csv(path ,info, "book_info")
+    # info = extract_book_info()
+    # path = './project/CrawlingData/'
+    # save_to_csv(path ,info, "book_info")
+    print(compare_db())

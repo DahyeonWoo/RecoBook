@@ -1,4 +1,4 @@
-
+import json
 from utils.ColumnsFromDB import ColumnsFromDB
 
 from book import BookInfo
@@ -62,13 +62,20 @@ class KakaoStyle:
 
     # 리스트카드 (책 제목과 유사한 책)
     @staticmethod
-    def Style2(title, topFive):
+    def Style2(title, topFive, review=False):
+        """
+        params: title: 스타일 제목
+        params: topFive: 5개 제목이 담긴 리스트
+        params: review: Review 테이블 사용 여부
+        """
         first = topFive[0]
         second = topFive[1]
         third = topFive[2]
         fourth = topFive[3]
         fifth = topFive[4]
-
+        
+        # for i in topFive:
+        title_text = title + ' 유사한 책'
         responseBody = {
             "version": "2.0",
             "template": {
@@ -76,7 +83,7 @@ class KakaoStyle:
                 {
                     "listCard": {
                     "header": {
-                        "title": title + " 유사한 책"
+                        "title": title_text
                     },
                     "items": [
                         {
@@ -186,6 +193,7 @@ class KakaoStyle:
         }
         return responseBody
 
+
     # 캐로셀 (basicCard)
     @staticmethod
     def Carousel(title, topFive):
@@ -286,6 +294,109 @@ class KakaoStyle:
                 ]
             }
 }
+    # 캐로셀 (유저 기반 책 추천)
+    @staticmethod
+    def Carousel2(topFive, keyword=''):
+
+        first = json.loads(BookInfo.get_isbn_to_info(topFive[0]))
+        print(first)
+        second = json.loads(BookInfo.get_isbn_to_info(topFive[1]))
+        third = json.loads(BookInfo.get_isbn_to_info(topFive[2]))
+        fourth = json.loads(BookInfo.get_isbn_to_info(topFive[3]))
+        fifth = json.loads(BookInfo.get_isbn_to_info(topFive[4]))
+        
+        responseBody = {
+            "version": "2.0",
+            "template": {
+                "outputs": [
+                    {
+                        "simpleText": {
+                        "text": keyword + " 좋아할만한 책"
+                    }
+                    },
+                {
+                    "carousel": {
+                    "type": "basicCard",
+                    "items": [
+                        {
+                        "title": first['title'],
+                        "description": first['author'],
+                        "thumbnail": {
+                            "imageUrl": first['resizedCover']
+                        },
+                        "buttons": [
+                            {
+                            "action":  "webLink",
+                            "label": "상세보기",
+                            "webLinkUrl": first['link']
+                            }
+                        ]
+                        },
+                        {
+                        "title": second['title'],
+                        "description": second['author'],
+                        "thumbnail": {
+                            "imageUrl": second['resizedCover']
+                        },
+                        "buttons": [
+                            {
+                            "action":  "webLink",
+                            "label": "상세보기",
+                            "webLinkUrl": second['link']
+                            }
+                        ]
+                        },
+                        {
+                        "title": third['title'],
+                        "description": third['author'],
+                        "thumbnail": {
+                            "imageUrl": third['resizedCover']
+                        },
+                        "buttons": [
+                            {
+                            "action":  "webLink",
+                            "label": "상세보기",
+                            "webLinkUrl": third['link']
+                            }
+                        ]
+                        },
+
+                        {
+                        "title": fourth['title'],
+                        "description": fourth['author'],
+                        "thumbnail": {
+                            "imageUrl": fourth['resizedCover']
+                        },
+                        "buttons": [
+                            {
+                            "action":  "webLink",
+                            "label": "상세보기",
+                            "webLinkUrl": fourth['link']
+                            }
+                        ]
+                        },
+
+                        {
+                        "title": fifth['title'],
+                        "description": fifth['author'],
+                        "thumbnail": {
+                            "imageUrl": fifth['resizedCover']
+                        },
+                        "buttons": [
+                            {
+                            "action":  "webLink",
+                            "label": "상세보기",
+                            "webLinkUrl": fifth['link']
+                            }
+                        ]
+                        }
+                    ]
+                    }
+                }
+                ]
+            }
+        }
+        return responseBody
 
     def oneItem_title(title):
         responseBody = {
