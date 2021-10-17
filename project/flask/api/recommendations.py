@@ -42,9 +42,8 @@ class NLPRecommend:
             return_list=list()
             for i in book_indices:
                 return_list.append(books.loc[i]['author'])
-            authors = '\n'.join(return_list)
 
-            return authors
+            return return_list
         except:
             return None
 
