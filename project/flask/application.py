@@ -562,8 +562,8 @@ def recommend_user(bot_type,reqinfo):
         return KakaoText().send_response({"Answer": answer})
 
     if bot_type == "kakao":
-        return KakaoText().send_response({"Answer": answer})
-        #return KakaoStyle.Carousel2(topFive=answer)
+        # return KakaoText().send_response({"Answer": answer})
+        return KakaoStyle.Carousel2(topFive=answer)
     elif bot_type == "naver":
         data = "RECOMMENDsimilar-" + reqinfo
         responseBody = {
