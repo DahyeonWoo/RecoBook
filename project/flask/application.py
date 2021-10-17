@@ -370,7 +370,7 @@ def get_book_info(bot_type,reqinfo):
                 author = body["action"]["detailParams"]["author"]["value"]
             elif bot_type == "naver":
                 author = body["userInfo"]["entities"][naver_author_entity]
-            result = BookInfo.get_author_to_info(author)
+            result = BookInfo.get_author_to_author_info(author)
             if not result:
                 answer = "해당 작가가 레꼬북에 없는 것 같네."
             else:
@@ -445,8 +445,11 @@ def get_book_info_top(bot_type,reqinfo):
 
         elif reqinfo == "interestAuthor":
             data =Top.get_topn_interestAuthor(top_n)
-            result = Top.accessing_dict_info(data)
-            answer = "현재 인기 있는 관심 작가 목록이야.\n" + result
+            # result = Top.accessing_dict_info(data)
+            count = 0
+            for r in data:
+                count += 1
+            return KakaoStyle.ElasticBasicListTop("인기 관심 작가 ", data, count, "등록함")
             
 
         elif reqinfo == "interestCategory":

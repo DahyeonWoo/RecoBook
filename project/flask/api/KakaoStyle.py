@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 import sys
+
+from werkzeug.datastructures import ResponseCacheControl
 sys.path.append("./project/flask/api")
 import json
 from api.author import Author
@@ -460,7 +462,7 @@ class KakaoStyle:
         return responseBody
 
     def oneItem_title(title):
-        print(title)
+        # print(title)
         responseBody = {
             "title": BookInfo.get_title_to_info(title)['title'],
             "description": BookInfo.get_title_to_info(title)['author'],
@@ -477,6 +479,7 @@ class KakaoStyle:
                 }
             ]
         }
+        print('oneItem_title responsebody:',responseBody)
         return responseBody
 
     def oneItem_title_stats(title, howManyRead, verb):
@@ -496,6 +499,7 @@ class KakaoStyle:
         }
         return responseBody
 
+    
     def oneItem_author(author):
         responseBody = {
             "title": BookInfo.get_author_to_author_info(author)["name"],
@@ -508,10 +512,11 @@ class KakaoStyle:
     def ElasticBasicCard(reqinfo,param):
 
         paramList = param.split(';')
-        print(paramList)
+        print('elastic basic card', paramList)
         number = len(paramList)
-        for i in range(number):
-            print(paramList[i])
+        print('elastic length:', number)
+        # for i in range(number):
+        #     print(paramList[i])
 
         frame = {
             "version": "2.0",
@@ -530,6 +535,7 @@ class KakaoStyle:
         }
 
         itemSection = frame['template']['outputs'][0]['carousel']['items']
+        print('itemSection', itemSection)
         for i in range(number):
             if reqinfo == "interestAuthor":
                 itemSection.append(KakaoStyle.oneItem_author(paramList[i]))
@@ -571,7 +577,7 @@ class KakaoStyle:
     @staticmethod
     def ElasticBasicListTop(subject, data, count, verb):
         '''
-        data는 책(top읽은 책, top위시리트스, top관심 책)목록이 dictionary 형태로 주어진다. 최대 5개
+        data는 책(top읽은 책, top위시리스트, top관심 책)목록이 dictionary 형태로 주어진다. 최대 5개
         '''
 
         print(subject, data, count, verb)
