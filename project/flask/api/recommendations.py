@@ -130,7 +130,7 @@ class NLPRecommend:
         try:
             sql = f"SELECT bookWant, bookRead FROM User WHERE idx = {user_idx};"
             db_cursor.execute(sql)
-            result = db_cursor.fetchall()[0][0]
+            result = list(db_cursor.fetchall()[0])
             # print('bookWant:',result)        
 
             bookWantList = []
