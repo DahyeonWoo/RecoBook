@@ -31,6 +31,17 @@ class BookInfo:
             return False
         return json.dumps(data, indent=2, default=str, ensure_ascii=False)
 
+    def get_author_to_author_info(name):
+        """
+        작가를 검색하면 db에서 해당 작가의 정보를 조회
+        :param name: 도서 작가
+        :return: 도서 정보 딕셔너리
+        """
+        data = ColumnsFromDB.get_db_data("*", "AuthorOrigin", "name", name)
+        if not data:
+            return False
+        #return json.dumps(data, indent=2, default=str, ensure_ascii=False)
+        return data
 
     def get_author_to_info(name):
         """
@@ -50,7 +61,7 @@ class BookInfo:
         :return: 도서 작가 정보
         """
         data = ColumnsFromDB.get_db_data("*", "AuthorOrigin", "name", name)
-        return data['description']
+        return data[description]
 
 
     def get_title_to_review(title):

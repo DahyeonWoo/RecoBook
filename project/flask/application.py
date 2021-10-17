@@ -42,85 +42,6 @@ def get_user_info_all(idx):
 @app.route("/<bot_type>/user/get/<reqinfo>", methods=["POST"])
 def get_user_info(bot_type,reqinfo):
     body = request.get_json()
-    if bot_type == "kakao":
-        idx = body["userRequest"]["user"]["id"]
-    elif bot_type == "naver":
-        idx = body["userInfo"]["id"]
-    else:
-        abort(404)
-
-    isUser = UserInfo.get_is_user(idx)
-    print(isUser)
-
-    if isUser != None:
-        userinfo = UserInfo.get_user_info(idx)
-        result = json.loads(userinfo)
-        # 유저 정보
-        bookRead = result["bookRead"]
-        bookWant = result['bookWant']
-        interestBook = result["interestBook"]
-        interestAuthor = result["interestAuthor"]
-        interestCategory = result["interestCategory"]
-
-        if reqinfo == "bookRead":
-            if bookRead != None and len(bookRead) != 0:
-                answer = "지금까지 <"+bookRead+">를 읽었네. 좋아!"
-                return KakaoStyle.ElasticCarousel("읽은 책", bookRead)
-            else:
-                answer = "우선 읽은 책을 등록해줘"
-        elif reqinfo == "bookWant":
-            if bookWant != None and len(bookWant) != 0:
-                answer = "읽고 싶은 책 목록은 <"+bookWant+">야."
-                return KakaoStyle.ElasticCarousel("읽고 싶은 책", bookWant)
-            else:
-                answer = "우선 읽고 싶은 책을 등록해줘"
-        elif reqinfo == "interestBook":
-            if interestBook != None and len(interestBook) != 0:
-                answer = "관심 있는 책 목록은 <"+interestBook+">야."
-                return KakaoStyle.ElasticCarousel("관심 있는 책", interestBook)
-            else:
-                answer = "우선 관심 책을 등록해줘"
-
-        elif reqinfo == "interestAuthor":
-            if interestAuthor != None and len(interestAuthor) != 0:
-                answer = "관심 있는 작가 목록은 <"+interestAuthor+">야."
-                return KakaoStyle.ElasticList("관심 있는 작가", interestAuthor)
-            else:
-                answer = "우선 관심 작가를 등록해줘"
-        elif reqinfo == "interestCategory":
-            if interestCategory != None and len(interestCategory) != 0:
-                answer = "관심 장르 목록은 <"+interestCategory+">야."
-                return KakaoText().send_response({"Answer": answer})
-            else:
-                answer = "우선 관심 장르를 등록해줘"
-        else:
-            answer = "레꼬북에 없는 기능이야. 계속 개발중이니까, 더 많은 기능을 기대해줘!"
-    else:
-        UserInfo.insert_user_idx(idx)
-        answer = "확장 기능을 사용하려면 유저 등록을 해야해. 유저 등록이 완료됐으니 기능을 다시 실행해줄래? 민감한 개인정보는 사용하지 않으니 걱정마!"
-    '''
-    if bot_type == "kakao":
-        return KakaoText().send_response({"Answer": answer})
-    '''
-    if bot_type == "naver":
-        data = "GET"+reqinfo
-        responseBody = {
-            data: [
-                {
-                    "name": "answer",
-                    "value": answer
-                }
-            ]
-        }
-        return responseBody
-
-    else:
-        abort(404)
-
-# 유저 정보 추가
-@app.route("/<bot_type>/user/insert/<reqinfo>", methods=["POST"])
-def insert_user_info(bot_type,reqinfo):
-    body = request.get_json()
 
     try:
         if bot_type == "kakao":
@@ -130,94 +51,61 @@ def insert_user_info(bot_type,reqinfo):
         else:
             abort(404)
 
-        print(idx)
         isUser = UserInfo.get_is_user(idx)
+        print(isUser)
+
+        answer = ''
+        card = ''
+
         if isUser != None:
+            userinfo = UserInfo.get_user_info(idx)
+            result = json.loads(userinfo)
+            # 유저 정보
+            bookRead = result["bookRead"]
+            bookWant = result['bookWant']
+            interestBook = result["interestBook"]
+            interestAuthor = result["interestAuthor"]
+            interestCategory = result["interestCategory"]
+
             if reqinfo == "bookRead":
-                if bot_type == "kakao":
-                    title = body["action"]["detailParams"]["title"]["value"]
-                elif bot_type == "naver":
-                    title = body["userInfo"]["entities"][naver_title_entity]
-                result = UserInfo.insert_user_info(idx, reqinfo, title)
-                if result == 1:
-                    answer = "읽은 책으로 <"+title+">가 등록됐어."
-                elif result == 2:
-                    answer = "이미 읽은 책으로 등록한 도서야"
-                elif not result:
-                    top_n = 5
-                    data = Top.get_topn_bookRead(top_n)
-                    result = Top.accessing_dict_info(data)
-                    answer = '해당 책이 레꼬북에 등록되어 있지 않아서 읽은 책에 등록할 수 없어. 다음과 같은 책을 등록해보는건 어때? 레꼬북에 사람들이 등록한 인기도서 순위야.\n' + result
+                if bookRead != None and len(bookRead) != 0:
+                    answer = "지금까지 <"+bookRead+">를 읽었네. 좋아!"
+                    card = KakaoStyle.ElasticBasicCard(reqinfo,bookRead)
+                else:
+                    answer = "우선 읽은 책을 등록해줘"
             elif reqinfo == "bookWant":
-                if bot_type == "kakao":
-                    title = body["action"]["detailParams"]["title"]["value"]
-                elif bot_type == "naver":
-                    title = body["userInfo"]["entities"][naver_title_entity]
-                result = UserInfo.insert_user_info(idx, reqinfo, title)
-                if result == 1:
-                    answer = "위시리스트에 <"+title+">가 등록됐어"
-                elif result == 2:
-                    answer = "이미 위시리스트에 등록한 도서야."
-                elif not result:
-                    top_n = 5
-                    data = Top.get_topn_bookWant(top_n)
-                    result = Top.accessing_dict_info(data)
-                    answer = '해당 책이 레꼬북에 등록되어 있지 않아서 위시리스트에 등록할 수 없어. 다음과 같은 책을 등록해보는건 어때? 레꼬북에 사람들이 등록한 인기 위시리스트 순위야.\n' + result
+                if bookWant != None and len(bookWant) != 0:
+                    answer = "읽고 싶은 책 목록은 <"+bookWant+">야."
+                    card = KakaoStyle.ElasticBasicCard(reqinfo,bookWant)
+                else:
+                    answer = "우선 읽고 싶은 책을 등록해줘"
             elif reqinfo == "interestBook":
-                if bot_type == "kakao":
-                    title = body["action"]["detailParams"]["title"]["value"]
-                elif bot_type == "naver":
-                    title = body["userInfo"]["entities"][naver_title_entity]
-                result = UserInfo.insert_user_info(idx, reqinfo, title)
-                if result == 1:
-                    answer = "관심 도서에 <"+title+">가 등록됐어"
-                elif result == 2:
-                    answer = "이미 등록한 관심 도서야."
-                elif not result:
-                    top_n = 5
-                    data = Top.get_topn_interestBook(top_n)
-                    result = Top.accessing_dict_info(data)
-                    answer = '해당 책이 레꼬북에 등록되어 있지 않아서 관심도서에 등록할 수 없어. 다음과 같은 책을 등록해보는건 어때? 레꼬북에 사람들이 등록한 인기 관심도서 순위야.\n' + result
+                if interestBook != None and len(interestBook) != 0:
+                    answer = "관심 있는 책 목록은 <"+interestBook+">야."
+                    card = KakaoStyle.ElasticBasicCard(reqinfo,interestBook)
+                else:
+                    answer = "우선 관심 책을 등록해줘"
             elif reqinfo == "interestAuthor":
-                if bot_type == "kakao":
-                    author = body["action"]["detailParams"]["author"]["value"]
-                elif bot_type == "naver":
-                    author = body["userInfo"]["entities"][naver_author_entity]
-                result = UserInfo.insert_user_info(idx, reqinfo, author)
-                if result == 1:
-                    answer = "관심 작가에 <"+author+">가 등록됐어"
-                elif result == 2:
-                    answer = "이미 등록한 관심 작가야"
-                elif not result:
-                    top_n = 5
-                    data = Top.get_topn_interestAuthor(top_n)
-                    result = Top.accessing_dict_info(data)
-                    answer = '해당 작가가 레꼬북에 등록되어 있지 않아서 관심 작가에 등록할 수 없어. 다음과 같은 책을 등록해보는건 어때? 레꼬북에 사람들이 등록한 관심 작가 순위야.\n' + result
+                if interestAuthor != None and len(interestAuthor) != 0:
+                    answer = "관심 작가 목록은 <" + interestAuthor+ ">야."
+                    card = KakaoStyle.ElasticBasicCard(reqinfo,interestAuthor)
+                else:
+                    answer = "우선 관심 작가를 등록해줘"
             elif reqinfo == "interestCategory":
-                if bot_type == "kakao":
-                    genre = body["action"]["detailParams"]["genre"]["value"]
-                elif bot_type == "naver":
-                    genre = body["userInfo"]["entities"][naver_genre_entity]
-                result = UserInfo.insert_user_info(idx, reqinfo, genre)
-                if result == 1:
-                    answer = "관심 장르에 <"+genre+">가 등록됐어"
-                elif result == 2:
-                    answer = "이미 등록한 관심 장르야"
-                elif not result:
-                    top_n = 5
-                    data = Top.get_topn_interestCategory(top_n)
-                    result = Top.accessing_dict_info(data)
-                    answer = '해당 장르가 레꼬북에 등록되어 있지 않아서 관심 장르에 등록할 수 없어. 다음과 같은 장르를 등록해보는건 어때? 레꼬북에 사람들이 등록한 인기 관심 잘르 순위야.\n' + result
-            else:
-                answer = "레꼬북에 없는 기능이야. 계속 개발중이니까, 더 많은 기능을 기대해줘!"
+                if interestCategory != None and len(interestCategory) != 0:
+                    answer = "관심 장르 목록은 <"+interestCategory+">야."
+                else:
+                    answer = "우선 관심 장르를 등록해줘"
         else:
             UserInfo.insert_user_idx(idx)
             answer = "확장 기능을 사용하려면 유저 등록을 해야해. 유저 등록이 완료됐으니 기능을 다시 실행해줄래? 민감한 개인정보는 사용하지 않으니 걱정마!"
-
         if bot_type == "kakao":
-            return KakaoText().send_response({"Answer": answer})
-        elif bot_type == "naver":
-            data = "INSERT" + reqinfo
+            if(len(card)!=0):
+                return card
+            else:
+                return KakaoText().send_response({"Answer": answer})
+        if bot_type == "naver":
+            data = "GET"+reqinfo
             responseBody = {
                 data: [
                     {
@@ -227,12 +115,131 @@ def insert_user_info(bot_type,reqinfo):
                 ]
             }
             return responseBody
+
         else:
             abort(404)
-
     except Exception as ex:
         abort(500)
         print(Exception)
+
+# 유저 정보 추가
+@app.route("/<bot_type>/user/insert/<reqinfo>", methods=["POST"])
+def insert_user_info(bot_type,reqinfo):
+    body = request.get_json()
+    print(body)
+
+    # try:
+    if bot_type == "kakao":
+        idx = body["userRequest"]["user"]["id"]
+    elif bot_type == "naver":
+        idx = body["userInfo"]["id"]
+    else:
+        abort(404)
+
+    print(idx)
+    isUser = UserInfo.get_is_user(idx)
+    if isUser != None:
+        if reqinfo == "bookRead":
+            if bot_type == "kakao":
+                title = body["action"]["detailParams"]["title"]["value"]
+            elif bot_type == "naver":
+                title = body["userInfo"]["entities"][naver_title_entity]
+            result = UserInfo.insert_user_info(idx, reqinfo, title)
+            if result == 1:
+                answer = "읽은 책으로 <"+title+">가 등록됐어."
+            elif result == 2:
+                answer = "이미 읽은 책으로 등록한 도서야"
+            elif not result:
+                top_n = 5
+                data = Top.get_topn_bookRead(top_n)
+                result = Top.accessing_dict_info(data)
+                answer = '해당 책이 레꼬북에 등록되어 있지 않아서 읽은 책에 등록할 수 없어. 다음과 같은 책을 등록해보는건 어때? 레꼬북에 사람들이 등록한 인기도서 순위야.\n' + result
+        elif reqinfo == "bookWant":
+            if bot_type == "kakao":
+                title = body["action"]["detailParams"]["title"]["value"]
+            elif bot_type == "naver":
+                title = body["userInfo"]["entities"][naver_title_entity]
+            result = UserInfo.insert_user_info(idx, reqinfo, title)
+            if result == 1:
+                answer = "위시리스트에 <"+title+">가 등록됐어"
+            elif result == 2:
+                answer = "이미 위시리스트에 등록한 도서야."
+            elif not result:
+                top_n = 5
+                data = Top.get_topn_bookWant(top_n)
+                result = Top.accessing_dict_info(data)
+                answer = '해당 책이 레꼬북에 등록되어 있지 않아서 위시리스트에 등록할 수 없어. 다음과 같은 책을 등록해보는건 어때? 레꼬북에 사람들이 등록한 인기 위시리스트 순위야.\n' + result
+        elif reqinfo == "interestBook":
+            if bot_type == "kakao":
+                title = body["action"]["detailParams"]["title"]["value"]
+            elif bot_type == "naver":
+                title = body["userInfo"]["entities"][naver_title_entity]
+            result = UserInfo.insert_user_info(idx, reqinfo, title)
+            if result == 1:
+                answer = "관심 도서에 <"+title+">가 등록됐어"
+            elif result == 2:
+                answer = "이미 등록한 관심 도서야."
+            elif not result:
+                top_n = 5
+                data = Top.get_topn_interestBook(top_n)
+                result = Top.accessing_dict_info(data)
+                answer = '해당 책이 레꼬북에 등록되어 있지 않아서 관심도서에 등록할 수 없어. 다음과 같은 책을 등록해보는건 어때? 레꼬북에 사람들이 등록한 인기 관심도서 순위야.\n' + result
+        elif reqinfo == "interestAuthor":
+            if bot_type == "kakao":
+                author = body["action"]["detailParams"]["author"]["value"]
+            elif bot_type == "naver":
+                author = body["userInfo"]["entities"][naver_author_entity]
+            result = UserInfo.insert_user_info(idx, reqinfo, author)
+            if result == 1:
+                answer = "관심 작가에 <"+author+">가 등록됐어"
+            elif result == 2:
+                answer = "이미 등록한 관심 작가야"
+            elif not result:
+                top_n = 5
+                data = Top.get_topn_interestAuthor(top_n)
+                result = Top.accessing_dict_info(data)
+                answer = '해당 작가가 레꼬북에 등록되어 있지 않아서 관심 작가에 등록할 수 없어. 다음과 같은 책을 등록해보는건 어때? 레꼬북에 사람들이 등록한 관심 작가 순위야.\n' + result
+        elif reqinfo == "interestCategory":
+            if bot_type == "kakao":
+                genre = body["action"]["detailParams"]["genre"]["value"]
+            elif bot_type == "naver":
+                genre = body["userInfo"]["entities"][naver_genre_entity]
+            result = UserInfo.insert_user_info(idx, reqinfo, genre)
+            if result == 1:
+                answer = "관심 장르에 <"+genre+">가 등록됐어"
+            elif result == 2:
+                answer = "이미 등록한 관심 장르야"
+            elif not result:
+                top_n = 5
+                data = Top.get_topn_interestCategory(top_n)
+                result = Top.accessing_dict_info(data)
+                answer = '해당 장르가 레꼬북에 등록되어 있지 않아서 관심 장르에 등록할 수 없어. 다음과 같은 장르를 등록해보는건 어때? 레꼬북에 사람들이 등록한 인기 관심 잘르 순위야.\n' + result
+        else:
+            answer = "레꼬북에 없는 기능이야. 계속 개발중이니까, 더 많은 기능을 기대해줘!"
+    else:
+        UserInfo.insert_user_idx(idx)
+        answer = "확장 기능을 사용하려면 유저 등록을 해야해. 유저 등록이 완료됐으니 기능을 다시 실행해줄래? 민감한 개인정보는 사용하지 않으니 걱정마!"
+
+
+    if bot_type == "kakao":
+        return KakaoText().send_response({"Answer": answer})
+    elif bot_type == "naver":
+        data = "INSERT" + reqinfo
+        responseBody = {
+            data: [
+                {
+                    "name": "answer",
+                    "value": answer
+                }
+            ]
+        }
+        return responseBody
+    else:
+        abort(404)
+
+    # except Exception as ex:
+    #     abort(500)
+    #     print(Exception)
 
 
 # 유저 정보 삭제
@@ -354,7 +361,7 @@ def get_book_info(bot_type,reqinfo):
             if not result:
                 answer = "해당 책이 레꼬북에 없는 것 같네."
             else:
-                #answer = "책 ISBN 번호로 검색했을 때의 결과야.\n" + result
+                # answer = "책 ISBN 번호로 검색했을 때의 결과야.\n" + result
                 return KakaoStyle.Style1(result["title"], result["resizedCover"], result["description"],
                                     result["author"], result["publisher"], result["priceStandard"], result["link"])
 
@@ -415,7 +422,7 @@ def get_book_info_top(bot_type,reqinfo):
             count = 0
             for r in data:
                 count += 1
-            return KakaoStyle.ElasticCarousel2("많이 읽은 책 ", data, count, "읽음")
+            return KakaoStyle.ElasticBasicListTop("많이 읽은 책 ", data, count, "읽음")
             #print('print:' ,result)
             
         elif reqinfo == "bookWant":
@@ -425,7 +432,7 @@ def get_book_info_top(bot_type,reqinfo):
             count = 0
             for r in data:
                 count +=1
-            return KakaoStyle.ElasticCarousel2("인기 위시리스트 도서 ", data, count, "등록함")
+            return KakaoStyle.ElasticBasicListTop("인기 위시리스트 도서 ", data, count, "등록함")
 
         elif reqinfo == "interestBook":
             data = Top.get_topn_interestBook(top_n)
@@ -434,7 +441,7 @@ def get_book_info_top(bot_type,reqinfo):
             count = 0
             for r in data:
                 count +=1
-            return KakaoStyle.ElasticCarousel2("인기 관심 도서 ", data, count, "등록함")
+            return KakaoStyle.ElasticBasicListTop("인기 관심 도서 ", data, count, "등록함")
 
         elif reqinfo == "interestAuthor":
             data =Top.get_topn_interestAuthor(top_n)
@@ -550,11 +557,12 @@ def recommend_user(bot_type,reqinfo):
     else:
         UserInfo.insert_user_idx(idx)
         answer = "확장 기능을 사용하려면 유저 등록을 해야해. 유저 등록이 완료됐으니 기능을 다시 실행해줄래? 민감한 개인정보는 사용하지 않으니 걱정마!"
-    if not answer:
-        answer = '등록된 관심 책이 없어. 먼저 관심책을 등록해보자!\n예) OOO 관심책 등록해줘'
+    # if not answer:
+    #     answer = '등록된 관심 책이 없어. 먼저 관심책을 등록해보자!\n예) OOO 관심책 등록해줘'
         return KakaoText().send_response({"Answer": answer})
 
     if bot_type == "kakao":
+        # return KakaoText().send_response({"Answer": answer})
         return KakaoStyle.Carousel2(topFive=answer)
     elif bot_type == "naver":
         data = "RECOMMENDsimilar-" + reqinfo
@@ -587,6 +595,7 @@ def recommend_random(bot_type):
     else:
         UserInfo.insert_user_idx(idx)
         answer = "확장 기능을 사용하려면 유저 등록을 해야해. 유저 등록이 완료됐으니 기능을 다시 실행해줄래? 민감한 개인정보는 사용하지 않으니 걱정마!"
+        return KakaoText().send_response({"Answer": answer})
     if bot_type == "kakao":
         return KakaoStyle.Style1(
             result["title"],

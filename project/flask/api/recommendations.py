@@ -25,6 +25,7 @@ class NLPRecommend:
             books = author_df[['author']]
             # 작가를 입력하면 해당 제목의 인덱스를 리턴받아 idx에 저장.
             indices = pd.Series(author_df.index, index = author_df['author']).drop_duplicates()
+            print(indices)
             idx = indices[author]
 
             # 입력된 작가와 작가설명(info)가 유사한 작가 5개 선정.
@@ -63,7 +64,6 @@ class NLPRecommend:
             embedding_list=list(book_df['vector_'])
             cosine_similarities = cosine_similarity(embedding_list, embedding_list)
 
-            books = book_df[['title']]
             # 책의 제목을 입력하면 해당 제목의 인덱스를 리턴받아 idx에 저장.
             indices = pd.Series(book_df.index, index = book_df['title']).drop_duplicates()
             idx = indices[title]
@@ -77,14 +77,15 @@ class NLPRecommend:
             book_indices = [i[0] for i in sim_scores]
 
             # 전체 데이터프레임에서 해당 인덱스의 행만 추출. 5개의 행을 가진다.
-            recommend = books.iloc[book_indices].reset_index(drop=True)
+            recommend = book_df.iloc[book_indices].reset_index(drop=True)
 
             # 데이터프레임으로부터 순차적으로 이미지를 출력
             return_list=list()
             for i in book_indices:
-                return_list.append(books.loc[i]['isbn'])
+                return_list.append(book_df.loc[i]['isbn'])
             return return_list
-        except:
+        except Exception as e:
+            print(e)
             return None
 
 
@@ -128,16 +129,17 @@ class NLPRecommend:
         db_cursor = db.cursor()
 
         try:
-            sql = f"SELECT bookWant, bookRead FROM User WHERE idx = {user_idx};"
+            sql = f"SELECT bookWant, BookRead FROM User WHERE idx = {user_idx};"
             db_cursor.execute(sql)
             result = list(db_cursor.fetchall()[0])
-            # print('bookWant:',result)        
+            # print('bookWant:',result)      
 
             bookWantList = []
             for book in result:
                 bookWantList.extend(book.split(';'))
 
-            bookWantList = list(set(['\''+bookWant.strip()+'\'' for bookWant in bookWantList]))          
+            bookWantList = list(set(['\''+bookWant.strip()+'\'' for bookWant in bookWantList]   ))  
+
             sql = f"SELECT isbn13,title,vector FROM Review WHERE title LIKE {' OR title LIKE '.join(bookWantList)};"
             # print(sql)
             db_cursor.execute(sql)  
@@ -229,8 +231,9 @@ def str_to_vector(str_vector):
     return vector
 
 if __name__ == '__main__':
-    title = '7년의 밤'
-    # print(NLPRecommend.recommend_by_title_using_reviews(title))
+    title = '스토너'
+    print(NLPRecommend.recommend_by_title_using_reviews(title))
     # print(NLPRecommend.recommend_by_title_using_description(title))
     # print(NLPRecommend.random_recommend())
-    print(NLPRecommend.recommend_by_user_using_review(3))
+    # print(NLPRecommend.recommend_by_user_using_review(40))
+    # print(NLPRecommend.recommend_by_author('조애너 콜'))
