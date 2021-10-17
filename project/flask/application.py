@@ -501,7 +501,7 @@ def recommend_similar(bot_type,reqinfo):
         if bot_type == "kakao":
             author = body["action"]["detailParams"]["author"]["value"]
             answer = NLPRecommend.recommend_by_author(author)
-            return KakaoStyle.Style3(author, answer)
+            return KakaoStyle.Carousel3(answer, author)
 
         elif bot_type == "naver":
             author = body["userInfo"]["entities"][naver_author_entity]

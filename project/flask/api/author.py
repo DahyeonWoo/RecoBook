@@ -1,30 +1,23 @@
 import sys
 import json
-sys.path.insert(1, 'project/flask/model')
+sys.path.append("./project/flask/")
+sys.path.append("./project/flask/api/")
 from db_model.mysql import conn_mysqldb
-from CreateDict import create_dict
+from api.utils.CreateDict import create_dict
+from api.utils.ColumnsFromDB import ColumnsFromDB
 
 class Author:
     
-
     @staticmethod
-    def get_author(name):
+    def get_author_info(name):
         """
         작가 이름을 검색하면 작가 정보를 나타내는 함수
         :param name: 작가 이름
         :return: 작가 정보 딕셔너리(json) 
         """
-        dict = create_dict()
-        mysql_db = conn_mysqldb()
-        db_cursor = mysql_db.cursor()
-        sql = "SELECT * FROM Author WHERE name LIKE %s" 
-        db_cursor.execute(sql, f"%{name}%")
-        author = db_cursor.fetchall()
-        if not author:
-            return None
-        return json.dumps(author, indent=2, ensure_ascii=False)
-
+        data = ColumnsFromDB.get_db_data('author, info', 'AuthorTest', 'author', name)
+        return json.dumps(data, indent=2, default=str, ensure_ascii=False)
 
 if __name__ == '__main__':
-    res = Author.get_author('이지은')
+    res = Author.get_author_info('조애너 콜')
     print(res)

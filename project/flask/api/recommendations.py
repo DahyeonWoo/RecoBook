@@ -43,9 +43,7 @@ class NLPRecommend:
             return_list=list()
             for i in book_indices:
                 return_list.append(books.loc[i]['author'])
-            authors = '\n'.join(return_list)
-
-            return authors
+            return return_list
         except:
             return None
 
@@ -232,8 +230,8 @@ def str_to_vector(str_vector):
 
 if __name__ == '__main__':
     title = '스토너'
-    print(NLPRecommend.recommend_by_title_using_reviews(title))
+    # print(NLPRecommend.recommend_by_title_using_reviews(title))
     # print(NLPRecommend.recommend_by_title_using_description(title))
     # print(NLPRecommend.random_recommend())
     # print(NLPRecommend.recommend_by_user_using_review(40))
-    # print(NLPRecommend.recommend_by_author('조애너 콜'))
+    print(NLPRecommend.recommend_by_author('조애너 콜'))

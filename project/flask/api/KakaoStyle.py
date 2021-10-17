@@ -2,6 +2,7 @@
 import sys
 sys.path.append("./project/flask/api")
 import json
+from api.author import Author
 from api.utils.ColumnsFromDB import ColumnsFromDB
 from api.book import BookInfo
 
@@ -401,6 +402,60 @@ class KakaoStyle:
         }
         return responseBody
 
+    @staticmethod
+    def Carousel3(topFive, keyword=''):
+        """
+        작가 추천 캐로셀
+        """
+        first = json.loads(Author.get_author_info(topFive[0]))
+        print(first)
+        second = json.loads(Author.get_author_info(topFive[1]))
+        third = json.loads(Author.get_author_info(topFive[2]))
+        fourth = json.loads(Author.get_author_info(topFive[3]))
+        fifth = json.loads(Author.get_author_info(topFive[4]))
+
+        responseBody = {
+            "version": "2.0",
+            "template": {
+                "outputs": [
+                    {
+                        "simpleText": {
+                            "text": keyword + " 유사한 작가"
+                        }
+                    },
+                    {
+                        "carousel": {
+                            "type": "basicCard",
+                            "items": [
+                                {
+                                    "name": first['author'],
+                                    "description": first['info'],
+                                },
+                                {
+                                    "name": second['author'],
+                                    "description": second['info'],
+                                },
+                                {
+                                    "name": third['author'],
+                                    "description": third['info'],
+                                },
+                                {
+                                    "name": fourth['author'],
+                                    "description": fourth['info'],
+                                },
+                                {
+                                    "name": fifth['author'],
+                                    "description": fifth['info'],
+                                },
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+                    
+        return responseBody
+
     def oneItem_title(title):
         print(title)
         responseBody = {
@@ -495,7 +550,7 @@ class KakaoStyle:
                     {
                         "listCard": {
                             "header": {
-                                "title": ansewr
+                                "title": answer
                             },
                             "items": [
 
