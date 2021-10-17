@@ -130,12 +130,15 @@ class NLPRecommend:
             sql = f"SELECT bookWant, BookRead FROM User WHERE idx = {user_idx};"
             db_cursor.execute(sql)
             result = list(db_cursor.fetchall()[0])
+            print(result)
             # print('bookWant:',result)      
 
             bookWantList = []
             for book in result:
+                if book == None:
+                    continue
                 bookWantList.extend(book.split(';'))
-
+            print(bookWantList)
             bookWantList = list(set(['\''+bookWant.strip()+'\'' for bookWant in bookWantList]   ))  
 
             sql = f"SELECT isbn13,title,vector FROM Review WHERE title LIKE {' OR title LIKE '.join(bookWantList)};"
@@ -234,5 +237,5 @@ if __name__ == '__main__':
     # print(NLPRecommend.recommend_by_title_using_reviews(title))
     # print(NLPRecommend.recommend_by_title_using_description(title))
     # print(NLPRecommend.random_recommend())
-    print(NLPRecommend.recommend_by_user_using_review(40))
+    print(NLPRecommend.recommend_by_user_using_review(3))
     # print(NLPRecommend.recommend_by_author('조애너 콜'))
