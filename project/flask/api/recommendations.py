@@ -170,7 +170,8 @@ class NLPRecommend:
             for i in book_indices:
                 return_list.append(df.loc[i]['isbn'])    
             return return_list
-        except:
+        except Exception as e:
+            print(e)
             return None
 
 
@@ -233,5 +234,5 @@ if __name__ == '__main__':
     # print(NLPRecommend.recommend_by_title_using_reviews(title))
     # print(NLPRecommend.recommend_by_title_using_description(title))
     # print(NLPRecommend.random_recommend())
-    # print(NLPRecommend.recommend_by_user_using_review(40))
-    print(NLPRecommend.recommend_by_author('조애너 콜'))
+    print(NLPRecommend.recommend_by_user_using_review(40))
+    # print(NLPRecommend.recommend_by_author('조애너 콜'))

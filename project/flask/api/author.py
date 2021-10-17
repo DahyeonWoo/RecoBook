@@ -2,7 +2,7 @@ import sys
 import json
 sys.path.append("./project/flask/")
 sys.path.append("./project/flask/api/")
-from db_model.mysql import conn_mysqldb
+from api.db_model.mysql import conn_mysqldb
 from api.utils.CreateDict import create_dict
 from api.utils.ColumnsFromDB import ColumnsFromDB
 
