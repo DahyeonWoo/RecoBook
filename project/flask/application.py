@@ -488,20 +488,21 @@ def recommend_similar(bot_type,reqinfo):
         if bot_type == "kakao":
             title = body["action"]["detailParams"]["title"]["value"]
             answer = NLPRecommend.recommend_by_title_using_reviews(title)
+            if not answer:
+                answer = NLPRecommend.recommend_by_title_using_description(title)
+            if not answer:
+                answer = "해당 책이 레꼬북에 등록되어 있지 않아."
             return KakaoStyle.Carousel(title, answer)
         elif bot_type == "naver":
             title = body["userInfo"]["entities"][naver_title_entity]
         answer = NLPRecommend.recommend_by_title_using_reviews(title)
-        if not answer:
-            answer = NLPRecommend.recommend_by_title_using_description(title)
-        if not answer:
-            answer = "해당 책이 레꼬북에 등록되어 있지 않아."
+        
 
     elif reqinfo == "author":
         if bot_type == "kakao":
             author = body["action"]["detailParams"]["author"]["value"]
             answer = NLPRecommend.recommend_by_author(author)
-            return KakaoStyle.Style3(author, answer)
+            return KakaoStyle.Carousel3(answer, author)
 
         elif bot_type == "naver":
             author = body["userInfo"]["entities"][naver_author_entity]
