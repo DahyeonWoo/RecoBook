@@ -56,6 +56,8 @@ class NLPRecommend:
             db_cursor.execute(sql)
             result = db_cursor.fetchall()
 
+
+
             book_df = pd.DataFrame(result,columns=['isbn','title','vector'])
             book_df['vector_']=book_df['vector'].apply(str_to_vector)
 
@@ -127,7 +129,7 @@ class NLPRecommend:
         db_cursor = db.cursor()
 
         try:
-            sql = f"SELECT bookWant, BookRead FROM User WHERE idx = {user_idx};"
+            sql = f"SELECT bookWant, BookRead FROM User WHERE idx = '{user_idx}';"
             db_cursor.execute(sql)
             result = list(db_cursor.fetchall()[0])
             print(result)
@@ -138,8 +140,8 @@ class NLPRecommend:
                 if book == None:
                     continue
                 bookWantList.extend(book.split(';'))
-            print(bookWantList)
             bookWantList = list(set(['\''+bookWant.strip()+'\'' for bookWant in bookWantList]   ))  
+            print(bookWantList)
 
             sql = f"SELECT isbn13,title,vector FROM Review WHERE title LIKE {' OR title LIKE '.join(bookWantList)};"
             # print(sql)
@@ -192,7 +194,7 @@ class NLPRecommend:
             sql = f"SELECT title, description FROM total_view WHERE title LIKE '%{title}%'"
             db_cursor.execute(sql)
             result = db_cursor.fetchall()[0]
-            print(result)
+            # print(result)
             # title에 해당하는 top_isbn 추출
             sql = f"SELECT top_isbn FROM total_view WHERE title LIKE '%{title}%'"
             db_cursor.execute(sql)
@@ -200,11 +202,11 @@ class NLPRecommend:
             # 문자형 리스트를 문자형 튜플로 변환
             top_isbn = str(tuple(eval(top_isbn)))
             # isbn에 해당하는 제목, 작가 추출
-            sql = f"SELECT title FROM total_view WHERE isbn13 in {top_isbn}"
+            sql = f"SELECT isbn13 FROM total_view WHERE isbn13 in {top_isbn}"
             db_cursor.execute(sql)
             result = db_cursor.fetchall()
-            print(result)
-            return result
+            # print(result)
+            return [int(x[0]) for x in result]
         except:
             return None
     
@@ -234,8 +236,8 @@ def str_to_vector(str_vector):
 
 if __name__ == '__main__':
     title = '스토너'
-    # print(NLPRecommend.recommend_by_title_using_reviews(title))
+    print(NLPRecommend.recommend_by_title_using_reviews(title))
     # print(NLPRecommend.recommend_by_title_using_description(title))
     # print(NLPRecommend.random_recommend())
-    print(NLPRecommend.recommend_by_user_using_review(3))
+    # print(NLPRecommend.recommend_by_user_using_review('6b7c4d55c7d257f6ff580d79cce258cf61cd253daf6323f980b9b4c8e6d09a3eb9'))
     # print(NLPRecommend.recommend_by_author('조애너 콜'))
