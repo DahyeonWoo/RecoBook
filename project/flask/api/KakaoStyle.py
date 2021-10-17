@@ -197,14 +197,16 @@ class KakaoStyle:
         }
         return responseBody
 
-    # 캐로셀 (basicCard)
+    # 캐로셀 (제목 기반 책 추천)
     @staticmethod
-    def Carousel(title, topFive):
-        first = topFive[0]
-        second = topFive[1]
-        third = topFive[2]
-        fourth = topFive[3]
-        fifth = topFive[4]
+    def Carousel(topFive, keyword=''):
+        print('top5:', topFive)
+        first = json.loads(BookInfo.get_isbn_to_info(topFive[0]))
+        print(first)
+        second = json.loads(BookInfo.get_isbn_to_info(topFive[1]))
+        third = json.loads(BookInfo.get_isbn_to_info(topFive[2]))
+        fourth = json.loads(BookInfo.get_isbn_to_info(topFive[3]))
+        fifth = json.loads(BookInfo.get_isbn_to_info(topFive[4]))
 
         responseBody = {
             "version": "2.0",
@@ -212,7 +214,7 @@ class KakaoStyle:
                 "outputs": [
                     {
                         "simpleText": {
-                            "text": title + " 유사한 책을 추천드려요."
+                            "text": keyword + ": 유사한 책을 추천해줄게!"
                         }
                     },
                     {
@@ -220,74 +222,74 @@ class KakaoStyle:
                             "type": "basicCard",
                             "items": [
                                 {
-                                    "title": BookInfo.get_title_to_info(first)['title'],
-                                    "description": BookInfo.get_title_to_info(first)['author'],
+                                    "title": first['title'],
+                                    "description": first['author'],
                                     "thumbnail": {
-                                        "imageUrl": BookInfo.get_title_to_info(first)['resizedCover']
+                                        "imageUrl": first['resizedCover']
                                     },
                                     "buttons": [
                                         {
                                             "action": "webLink",
                                             "label": "상세보기",
-                                            "webLinkUrl": BookInfo.get_title_to_info(first)['link']
+                                            "webLinkUrl": first['link']
                                         }
                                     ]
                                 },
                                 {
-                                    "title": BookInfo.get_title_to_info(second)['title'],
-                                    "description": BookInfo.get_title_to_info(second)['author'],
+                                    "title": second['title'],
+                                    "description": second['author'],
                                     "thumbnail": {
-                                        "imageUrl": BookInfo.get_title_to_info(second)['resizedCover']
+                                        "imageUrl": second['resizedCover']
                                     },
                                     "buttons": [
                                         {
                                             "action": "webLink",
                                             "label": "상세보기",
-                                            "webLinkUrl": BookInfo.get_title_to_info(second)['link']
+                                            "webLinkUrl": second['link']
                                         }
                                     ]
                                 },
                                 {
-                                    "title": BookInfo.get_title_to_info(third)['title'],
-                                    "description": BookInfo.get_title_to_info(third)['author'],
+                                    "title": third['title'],
+                                    "description": third['author'],
                                     "thumbnail": {
-                                        "imageUrl": BookInfo.get_title_to_info(third)['resizedCover']
+                                        "imageUrl": third['resizedCover']
                                     },
                                     "buttons": [
                                         {
                                             "action": "webLink",
                                             "label": "상세보기",
-                                            "webLinkUrl": BookInfo.get_title_to_info(third)['link']
-                                        }
-                                    ]
-                                },
-
-                                {
-                                    "title": BookInfo.get_title_to_info(fourth)['title'],
-                                    "description": BookInfo.get_title_to_info(fourth)['author'],
-                                    "thumbnail": {
-                                        "imageUrl": BookInfo.get_title_to_info(fourth)['resizedCover']
-                                    },
-                                    "buttons": [
-                                        {
-                                            "action": "webLink",
-                                            "label": "상세보기",
-                                            "webLinkUrl": BookInfo.get_title_to_info(fourth)['link']
+                                            "webLinkUrl": third['link']
                                         }
                                     ]
                                 },
 
                                 {
-                                    "title": BookInfo.get_title_to_info(fifth)['title'],
-                                    "description": BookInfo.get_title_to_info(fifth)['author'],
+                                    "title": fourth['title'],
+                                    "description": fourth['author'],
                                     "thumbnail": {
-                                        "imageUrl": BookInfo.get_title_to_info(fifth)['resizedCover']
+                                        "imageUrl": fourth['resizedCover']
                                     },
                                     "buttons": [
                                         {
                                             "action": "webLink",
                                             "label": "상세보기",
-                                            "webLinkUrl": BookInfo.get_title_to_info(fifth)['link']
+                                            "webLinkUrl": fourth['link']
+                                        }
+                                    ]
+                                },
+
+                                {
+                                    "title": fifth['title'],
+                                    "description": fifth['author'],
+                                    "thumbnail": {
+                                        "imageUrl": fifth['resizedCover']
+                                    },
+                                    "buttons": [
+                                        {
+                                            "action": "webLink",
+                                            "label": "상세보기",
+                                            "webLinkUrl": fifth['link']
                                         }
                                     ]
                                 }
@@ -297,11 +299,12 @@ class KakaoStyle:
                 ]
             }
         }
+        return responseBody
 
     # 캐로셀 (유저 기반 책 추천)
     @staticmethod
     def Carousel2(topFive, keyword=''):
-
+        print('top5:', topFive)
         first = json.loads(BookInfo.get_isbn_to_info(topFive[0]))
         print(first)
         second = json.loads(BookInfo.get_isbn_to_info(topFive[1]))

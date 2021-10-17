@@ -492,7 +492,7 @@ def recommend_similar(bot_type,reqinfo):
                 answer = NLPRecommend.recommend_by_title_using_description(title)
             if answer == None:
                 answer = "해당 책이 레꼬북에 등록되어 있지 않아."
-            return KakaoStyle.Carousel(title, answer)
+            return KakaoStyle.Carousel(topFive=answer, keyword=title)
         elif bot_type == "naver":
             title = body["userInfo"]["entities"][naver_title_entity]
         answer = NLPRecommend.recommend_by_title_using_reviews(title)
