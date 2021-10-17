@@ -428,23 +428,23 @@ class KakaoStyle:
                             "type": "basicCard",
                             "items": [
                                 {
-                                    "name": first['author'],
+                                    "title": first['author'],
                                     "description": first['info'],
                                 },
                                 {
-                                    "name": second['author'],
+                                    "title": second['author'],
                                     "description": second['info'],
                                 },
                                 {
-                                    "name": third['author'],
+                                    "title": third['author'],
                                     "description": third['info'],
                                 },
                                 {
-                                    "name": fourth['author'],
+                                    "title": fourth['author'],
                                     "description": fourth['info'],
                                 },
                                 {
-                                    "name": fifth['author'],
+                                    "title": fifth['author'],
                                     "description": fifth['info'],
                                 },
                             ]
