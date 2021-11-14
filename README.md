@@ -1,4 +1,4 @@
-# BookCode 
+# recoBook
 
 ## Python 가상환경 설정 방법
 1. vscode에서 21_HF216 폴더 열기
