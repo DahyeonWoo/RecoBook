@@ -1,5 +1,3 @@
-# recoBook
-
 ## Python 가상환경 설정 방법
 1. vscode에서 21_HF216 폴더 열기
 2. 터미널에 `cd .\bookcode\Scripts\Activate.ps1` 입력 후 실행
