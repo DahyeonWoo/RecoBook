@@ -8,4 +8,4 @@
 [SW/HW 제작설계서](https://github.com/defwdahyun0/recoBook/blob/main/SW%EA%B0%9C%EB%B0%9C_HW%EC%A0%9C%EC%9E%91%EC%84%A4%EA%B3%84%EC%84%9C_%EC%9D%91%EC%9A%A9%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4_%EB%A0%88%EA%BC%AC%EB%B6%81_2%EC%B0%A8.pptx.pdf)
 
 ## Video
-[시연동영상](https://www.youtube.com/watch?v=P1gPMj9kTmo)
+[시연동영상](https://www.youtube.com/watch?v=V9GjrwIVqFE)
